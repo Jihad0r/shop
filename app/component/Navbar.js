@@ -67,7 +67,7 @@ export default function Navbar() {
             <li className=" hover:bg-blue-400 py-4 px-1 hover:text-white  cursor-pointer traslation" ><Link href="/coats">Coats</Link></li>
             <li className=" hover:bg-blue-400 py-4 px-1 hover:text-white  cursor-pointer traslation" ><Link href="/shorts">Shorts</Link></li>
             <li className=" hover:bg-blue-400 py-4 px-1 hover:text-white  cursor-pointer traslation" ><Link href="/others">Others</Link></li>
-            {!isAdmin &&<li className=" hover:bg-blue-400 py-4 px-1 hover:text-white cursor-pointer  traslation" ><Link  href="/cart">Cart</Link></li>}
+            {user && !isAdmin &&<li className=" hover:bg-blue-400 py-4 px-1 hover:text-white cursor-pointer  traslation" ><Link  href="/cart">Cart</Link></li>}
             
           </ul>
 
@@ -119,7 +119,7 @@ export default function Navbar() {
 
       {/* Mobile Search */}
       {showSearch && (
-        <div className="md:hidden p-2  mt-2">
+        <div className="md:hidden md:-top-100 top-12 z-200  absolute bg-white shadow-md w-full mt-4  flex flex-col gap-3 text-sm text-gray-700 p-4">
           <input
               type="text"
               placeholder="Search by title or category..."
@@ -132,7 +132,7 @@ export default function Navbar() {
 
       {/* Mobile Menu Dropdown */}
       {showMobileMenu && (
-        <div className="md:hidden md:-top-100 top-12  absolute bg-white shadow-md w-full mt-4  flex flex-col gap-3 text-sm text-gray-700 p-4">
+        <div className="md:hidden md:-top-100 top-12  z-200 absolute bg-white shadow-md w-full mt-4  flex flex-col gap-3 text-sm text-gray-700 p-4">
           <div className="flex flex-row-reverse items-center justify-between">{user ? (
             <>
               <button

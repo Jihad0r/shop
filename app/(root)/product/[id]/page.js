@@ -3,9 +3,11 @@ import { useState, useEffect, useMemo } from "react";
 import { useParams } from "next/navigation";
 import toast from "react-hot-toast";
 import ReviewModal from "@/app/component/ReviewModal";
+import { useRouter } from "next/navigation";
 
 export default function ProductDetails() {
   const { id } = useParams();
+  const router = useRouter();
   const [product, setProduct] = useState(null);
   const [products, setProducts] = useState(null);
   const [quantity, setQuantity] = useState(1);
@@ -39,14 +41,33 @@ export default function ProductDetails() {
       };
       fetchProducts();
     }, [setProducts]);
-  
+
+   const handleCart = async (id) => {
+  try {
+    const res = await fetch(`/api/carts/${id}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ quantity })
+    });
+
+    const result = await res.json();
+    if (!res.ok) throw new Error(result?.error || "add item failed");
+    toast.success(`Added ${quantity} item${quantity > 1 ? "s" : ""} successfully`);
+  } catch (err) {
+    toast.error(err.message);
+  }
+};
+
+
     const randomProducts = useMemo(() => {
       if (!products || products.length === 0) return [];
       return [...products].sort(() => Math.random() - 0.5).slice(0, 4);
     }, [products])
 
   if (!product) {
-    return <p className="text-center py-20">Loading...</p>;
+    return <p className="text-center text-2xl font-bold py-20">Loading...</p>;
   }
 
   return (
@@ -61,11 +82,12 @@ export default function ProductDetails() {
           </div>
         <div className="lg:w-1/2 flex flex-col gap-4">
           <h1 className="text-2xl font-bold">{product.title}</h1>
-          <div className="flex items-center gap-2">
-            <span className="text-yellow-400 text-xl">
+          <p>{product.inStock - quantity} available</p>
+         {product.rate? <div className="flex items-center gap-2">
+           <span className="text-yellow-400 text-xl">
                   {"★".repeat(product.rate)}</span>
             <p className="font-semibold">{product.rate}/5</p>
-          </div>
+          </div>:<p className="">No Reviews</p>}
           <div className="flex items-center gap-4">
             <span className="text-2xl font-bold">${product.price}</span>
             {product.oldPrice && (
@@ -92,12 +114,12 @@ export default function ProductDetails() {
               <span className="px-4">{quantity}</span>
               <button
                 className="px-3 py-2"
-                onClick={() => setQuantity((q) => q + 1)}
+                onClick={() => setQuantity((q) => Math.min(product.inStock, q + 1))}
               >
                 +
               </button>
             </div>
-            <button className="bg-black text-white px-6 py-3 rounded-lg">
+            <button className="bg-black text-white px-6 py-3 rounded-lg cursor-pointer" onClick={()=>handleCart(product._id)}>
               Add to Cart
             </button>
           </div>

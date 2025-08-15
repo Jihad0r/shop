@@ -36,7 +36,7 @@ export default function Footer() {
               className="flex-1 outline-none bg-transparent"
             />
           </div>
-          <button className="bg-white text-black font-semibold cursor-pointer rounded-full px-6 py-2 hover:bg-gray-200 transition">
+          <button className="bg-white text-black cursor-pointer rounded-full px-6 py-2 hover:bg-gray-200 transition">
             Subscribe to Newsletter
           </button>
         </div>
