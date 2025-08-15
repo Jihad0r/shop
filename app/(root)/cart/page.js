@@ -57,7 +57,7 @@ export default function CartPage() {
   return (
     <div className="p-4">
       <h1 className="p-6 font-bold text-2xl">Cart</h1>
-      <div className="flex flex-col lg:flex-row gap-4">
+      <div className="flex flex-col md:flex-row gap-4">
         
         {/* Cart Items */}
         <div className="w-full md:w-2/3 space-y-4 max-h-[500px] overflow-y-auto pr-2 border border-gray-200 p-4 rounded-2xl">
@@ -65,13 +65,14 @@ export default function CartPage() {
             carts.map((cart) => (
               <div key={cart._id} className="flex justify-between gap-4 relative">
                 <div className="flex">
-                  <div className="bg-gray-200 p-2 w-40 h-30 rounded-2xl mr-2">
+                 <div className="bg-gray-200 p-2 rounded-2xl mr-2 min-w-28 h-28 flex items-center justify-center">
                     <img
-                      className="object-cover p-2 w-40 h-30"
+                      className="object-contain w-full h-full"
                       src={cart.product.image}
                       alt={cart.product.title}
                     />
                   </div>
+
                   <div className="flex flex-col gap-2">
                     <h1 className="text-xl font-bold">{cart.product.title}</h1>
                     <p>Qty: {cart.quantity}</p>
@@ -90,7 +91,7 @@ export default function CartPage() {
         </div>
 
         {/* Order Summary */}
-        <div className="w-1/3 p-3 border border-gray-400 rounded-2xl h-fit space-y-4">
+        <div className="w-full md:w-1/3 p-3 border border-gray-400 rounded-2xl h-fit space-y-4">
           <h1 className="font-bold">Order Summary</h1>
           <div className="flex justify-between">
             <p className="text-gray-500">Subtotal</p>
