@@ -8,49 +8,43 @@ export default function ReviewModal({ productId, onClose, onReviewAdded }) {
   const [comment, setComment] = useState("");
   const [loading, setLoading] = useState(false);
 
-
-
   const submitReview = async () => {
-  if (!rating) {
-    toast.error("Please select a rating");
-    return;
-  }
-
-  try {
-    setLoading(true);
-
-    const formData = new FormData();
-    formData.append("rating", rating);
-    formData.append("comment", comment);
-
-    const res = await fetch(`/api/products/reviews/${productId}`, {
-      method: "POST",
-      body: formData, // no headers here, browser sets them automatically
-    });
-
-    const contentType = res.headers.get("content-type");
-
-    if (!res.ok) {
-      let message = "Something went wrong";
-      if (contentType && contentType.includes("application/json")) {
-        const errorData = await res.json();
-        message = errorData?.message || message;
-      } else {
-        message = await res.text();
-      }
-      throw new Error(message);
+    if (!rating) {
+      toast.error("Please select a rating");
+      return;
     }
 
-    const data = await res.json();
-    onReviewAdded(data);
-    toast.success("Review submitted successfully!");
-    onClose();
-  } catch (err) {
-    toast.error(err.message);
-  } finally {
-    setLoading(false);
-  }
-};
+    try {
+      setLoading(true);
+
+      const formData = new FormData();
+      formData.append("rating", rating);
+      formData.append("comment", comment);
+
+      const res = await fetch(`/api/products/reviews/${productId}`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        // السيرفر رجّع Error
+        toast.error(data.error || "Something went wrong");
+        return; // وقف هنا، ما تكملش
+      }
+
+      // Success
+      onReviewAdded(data);
+      toast.success("Review submitted successfully!");
+      onClose();
+    } catch (err) {
+      // Error حقيقي من الشبكة/الكود مش من السيرفر
+      toast.error(err.message || "Failed to submit review");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-[#000000ba]  bg-opacity-50 flex items-center justify-center z-50">
@@ -68,7 +62,11 @@ export default function ReviewModal({ productId, onClose, onReviewAdded }) {
                 onClick={() => setRating(star)}
                 onMouseEnter={() => setHoverRating(star)}
                 onMouseLeave={() => setHoverRating(0)}
-                className={isFilled ? "text-yellow-400 text-2xl" : "text-gray-300 text-2xl"}
+                className={
+                  isFilled
+                    ? "text-yellow-400 text-2xl"
+                    : "text-gray-300 text-2xl"
+                }
               >
                 ★
               </button>

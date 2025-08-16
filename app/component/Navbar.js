@@ -46,7 +46,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="h-fit bg-white shadow-md w-full">
+    <nav className="h-fit bg-white px-2 shadow-md w-full">
       {/* Top bar */}
       <div className="flex justify-around items-center">
         {/* Logo + Hello */}

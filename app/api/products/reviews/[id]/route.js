@@ -16,6 +16,8 @@ export async function POST(req, { params }) {
     }
 
     const userId = await getUserFromRequest(req);
+    console.log(userId);
+    
     if (!userId) {
       return NextResponse.json({ error: "cant rate products, login first" }, { status: 401 });
     }
@@ -45,21 +47,23 @@ export async function POST(req, { params }) {
     const user = await User.findById(userId);
 
     const review = {
-      user: userId,
-      comment,
-      rating
-    };
+  user: userId,
+  comment,
+  rating,
+  createdAt: new Date()
+};
 
-    product.reviews.push(review);
-    product.rate =
-      product.reviews.reduce((acc, r) => acc + r.rating, 0) / product.reviews.length;
+product.reviews.push(review);
+product.rate =
+  product.reviews.reduce((acc, r) => acc + r.rating, 0) / product.reviews.length;
 
-    await product.save();
+await product.save();
+console.log(review);
+console.log(product.reviews);
 
-    return NextResponse.json({
-      message: "Review added",
-      product
-    }, { status: 201 });
+
+return NextResponse.json(review, { status: 201 });
+
   } catch (err) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }

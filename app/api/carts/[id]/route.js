@@ -92,7 +92,7 @@ export async function DELETE(req, { params }) {
 
     await cart.save();
 
-    // Return updated cart
+
     return NextResponse.json(cart);
   } catch (err) {
     return NextResponse.json({ error: err.message }, { status: 500 });

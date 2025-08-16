@@ -12,7 +12,7 @@ import Image from "next/image";
 export default function Footer() {
   return (
     <footer className="bg-gray-100 text-gray-700">
-      <div className="mx-auto px-6 py-12 grid grid-cols-2 gap-8">
+      <div className="mx-auto px-6 py-12 flex flex-col md:flex-row justify-between gap-8">
         <div >
           <h3 className="text-2xl font-bold mb-4">SHOP.CO</h3>
           <p className="text-sm mb-4">
@@ -23,20 +23,20 @@ export default function Footer() {
             <a href="https://github.com/Jihad0r"><FaGithub className="p-2 border rounded-full w-9 h-9" /></a>
           </div>
         </div>
-        <div className="bg-black text-white p-8 rounded-2xl mx-auto gap-4">
-        <h2 className="text-xl font-bold text-center md:text-left uppercase">
+        <div className="bg-black text-white p-4 rounded-2xl">
+        <h2 className=" font-bold text-center uppercase">
           Stay up to date about our latest offers
         </h2>
-        <div className="flex flex-col gap-3">
-          <div className="flex items-center bg-white p-2 text-gray-800 rounded-full">
+        <div className="flex flex-col ">
+          <div className="flex items-center mb-2 bg-white p-2 text-gray-800 rounded-full">
             <FiMail className="text-gray-500 mr-2" />
             <input
               type="email"
-              placeholder="Enter your email address"
+              placeholder="Email"
               className="outline-none bg-transparent"
             />
           </div>
-          <button className="bg-white text-black cursor-pointer rounded-full px-6 py-2 hover:bg-gray-200 transition">
+          <button className="bg-white text-black cursor-pointer rounded-full p-2 hover:bg-gray-200 transition">
             Subscribe to Newsletter
           </button>
         </div>
@@ -44,7 +44,7 @@ export default function Footer() {
         </div>
       <div className="max-w-6xl mx-auto px-6 py-4 border-t flex flex-col md:flex-row items-center justify-between text-sm">
         <p>Shop.co © 2025-2026, All Rights Jihad</p>
-        <div className="flex gap-3 mt-2 md:mt-0">
+        <div className="flex md:gap-1 gap-3 mt-2 md:mt-0">
           <Image src={payment1} alt="Visa" className="cursor-pointer" width={40} height={24} />
           <Image src={payment2} alt="MasterCard" className="cursor-pointer" width={40} height={24} />
           <Image src={payment3} alt="PayPal" className="cursor-pointer" width={40} height={24} />

@@ -18,7 +18,7 @@ export default function Home() {
         const data = await res.json();
         setProducts(data);
       } catch (err) {
-        toast.error(err.message);
+        toast.error(err.error);
       }
     };
     fetchProducts();
@@ -73,7 +73,7 @@ export default function Home() {
       </section>
 
       {/* Brands Row */}
-      <div className="bg-black py-4 text-white z-[100] flex justify-around relative">
+      <div className="bg-black py-4 text-white z-[100] flex flex-wrap justify-around relative">
         <span className="font-bold text-lg">VERSACE</span>
         <span className="font-bold text-lg">ZARA</span>
         <span className="font-bold text-lg">GUCCI</span>
@@ -83,7 +83,7 @@ export default function Home() {
 
       <div className="px-6 py-10 bg-white z-[100] relative">
         <h1 className="text-6xl text-center font-bold mb-6">for You</h1>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2  md:grid-cols-3  lg:grid-cols-4 gap-6">
          {randomProducts ? (
   randomProducts.map((product) => (
     <div
@@ -91,13 +91,15 @@ export default function Home() {
       className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col cursor-pointer"
       onClick={() => router.push(`/product/${product._id}`)}
     >
-      <div className="bg-gray-200 rounded-2xl">
-        <img
+  
+        <div className="bg-gray-200 p-2 rounded-2xl w-full md:min-w-60 h-60 flex items-center justify-center">
+                    <img
+                      className="object-contain w-full h-full"
+                      
           src={product.image}
           alt={product.title}
-          className="h-70 m-auto object-cover"
-        />
-      </div>
+                    />
+                  </div>
       <div className="p-4 flex-1 flex flex-col justify-between">
         <div>
           <h2 className="text-lg font-semibold">{product.title}</h2>

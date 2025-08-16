@@ -58,7 +58,7 @@ export default function Login() {
       router.push("/");
     } catch (err) {
       toast.dismiss(loadingToast);
-      toast.error(err.message || "Something went wrong");
+      toast.error(err.error || "Something went wrong");
     }
   };
 

@@ -17,7 +17,7 @@ export default function Home() {
         const data = await res.json();
         setProducts(data);
       } catch (err) {
-        toast.error(err.message);
+        toast.error(err.error);
       }
     };
 
@@ -34,7 +34,7 @@ export default function Home() {
   return (
     <div>
       <h1 className="p-6 font-bold text-2xl">{category.charAt(0).toUpperCase() + category.slice(1)}</h1>
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 p-6">
+    <div className="grid grid grid-cols-1 sm:grid-cols-2  md:grid-cols-3  lg:grid-cols-4 gap-6 p-6">
       {products.length > 0 ? (
         products.map((product) => (
           <div
@@ -42,13 +42,14 @@ export default function Home() {
             className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col cursor-pointer"
             onClick={() => router.push(`/product/${product._id}`)}
           >
-            <div className="bg-gray-200 rounded-2xl">
-              <img
-                src={product.image}
-                alt={product.title}
-                className="h-70 m-auto object-cover"
-              />
-            </div>
+            <div className="bg-gray-200 p-2 rounded-2xl w-full md:min-w-60 h-60 flex items-center justify-center">
+                    <img
+                      className="object-contain w-full h-full"
+                      
+          src={product.image}
+          alt={product.title}
+                    />
+                  </div>
             <div className="p-4 flex-1 flex flex-col justify-between">
               <div>
                 <h2 className="text-lg font-semibold">{product.title}</h2>

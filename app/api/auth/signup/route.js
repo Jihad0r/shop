@@ -29,9 +29,7 @@ export async function POST(req) {
     const existingUser = await User.findOne({ $or: [{ username }, { email }] });
     if (existingUser) {
       const isEmailTaken = existingUser.email === email;
-      const isUsernameTaken = existingUser.username === username;
       return NextResponse.json({
-        field: isEmailTaken ? "email" : "username",
         error: isEmailTaken ? "Email already in use" : "Username already taken"
       }, { status: 400 });
     }

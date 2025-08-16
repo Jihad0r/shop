@@ -18,7 +18,7 @@ export default function CartPage() {
       const data = await res.json();
       setCarts(data.items || []);
     } catch (err) {
-      toast.error(err.message);
+      toast.error(err.error);
     }
   };
 
@@ -37,7 +37,7 @@ export default function CartPage() {
 
       toast.success(`Item deleted successfully`);
     } catch (err) {
-      toast.error(err.message);
+      toast.error(err.error);
     }
   };
 
