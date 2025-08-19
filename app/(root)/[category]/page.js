@@ -27,7 +27,8 @@ export default function Home() {
   // Loading state
   if (products.length === 0) {
     return (
-      <p className="text-center text-2xl font-bold py-20">Loading...</p>
+      <div className="min-h-100">
+      <p className="text-center text-2xl font-bold py-20">Loading...</p></div>
     );
   }
 

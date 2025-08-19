@@ -72,6 +72,7 @@ export default function Navbar() {
           </ul>
 
           {/* Search input */}
+          {isAdmin &&
           <div className="border-2 border-gray-300 w-2/3 rounded-full px-3 py-1">
             <input
               type="text"
@@ -80,7 +81,7 @@ export default function Navbar() {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="outline-none px-3 rounded w-full"
             />
-          </div>
+          </div>}
 
           {/* User controls */}
           <div className="flex items-center gap-2">
@@ -97,10 +98,11 @@ export default function Navbar() {
         {/* Mobile icons */}
         <div className="flex md:hidden items-center gap-4">
           {/* Search icon */}
+          {isAdmin &&
           <FiSearch
             className="text-xl cursor-pointer"
             onClick={() => setShowSearch(!showSearch)}
-          />
+          />}
 
           {/* Hamburger menu */}
           {showMobileMenu ? (
@@ -132,7 +134,7 @@ export default function Navbar() {
 
       {/* Mobile Menu Dropdown */}
       {showMobileMenu && (
-        <div className="md:hidden md:-top-100 top-12  z-200 absolute bg-white shadow-md w-full mt-4  flex flex-col gap-3 text-sm text-gray-700 p-4">
+        <div className="md:hidden md:-top-100 top-12 left-0  z-200 absolute bg-white shadow-md w-full mt-4  flex flex-col gap-3 text-sm text-gray-700 p-3">
           <div className="flex flex-row-reverse items-center justify-between">{user ? (
             <>
               <button
@@ -148,16 +150,16 @@ export default function Navbar() {
           ) : (
             <Link href="/login" onClick={() => setShowMobileMenu(false)} className="text-green-600">Login</Link>
           )}</div>
-          <Link className="hover:bg-blue-200 p-2 traslation" href="/" onClick={() => setShowMobileMenu(false)}>Home</Link>
-          <Link className="hover:bg-blue-200 p-2 traslation"onClick={() => setShowMobileMenu(false)}href="/T-shirts">Shirts</Link>
-          <Link className="hover:bg-blue-200 p-2 traslation" onClick={() => setShowMobileMenu(false)}href="/coats">Coats</Link>
-          <Link className="hover:bg-blue-200 p-2 traslation"href="/shorts" onClick={() => setShowMobileMenu(false)}>Shorts </Link>
+          <Link className="hover:bg-blue-200 p-2   traslation" href="/" onClick={() => setShowMobileMenu(false)}>Home</Link>
+          <Link className="hover:bg-blue-200 p-2   traslation"onClick={() => setShowMobileMenu(false)}href="/T-shirts">Shirts</Link>
+          <Link className="hover:bg-blue-200 p-2  traslation" onClick={() => setShowMobileMenu(false)}href="/coats">Coats</Link>
+          <Link className="hover:bg-blue-200 p-2  traslation"href="/shorts" onClick={() => setShowMobileMenu(false)}>Shorts </Link>
           
-          <Link className="hover:bg-blue-200 p-2 traslation" onClick={() => setShowMobileMenu(false)} href="/shoes">Shoses</Link>
+          <Link className="hover:bg-blue-200 p-2   traslation" onClick={() => setShowMobileMenu(false)} href="/shoes">Shoses</Link>
           
-          <Link className="hover:bg-blue-200 p-2 traslation" onClick={() => setShowMobileMenu(false)}href="/others">Others</Link>
+          <Link className="hover:bg-blue-200 p-2  traslation" onClick={() => setShowMobileMenu(false)}href="/others">Others</Link>
           {isAdmin ? (
-            <Link className="hover:bg-blue-200 p-2 traslation" href="/admin" onClick={() => setShowMobileMenu(false)}>Admin Dashboard</Link>
+            <Link className="hover:bg-blue-200 p-2  traslation" href="/admin" onClick={() => setShowMobileMenu(false)}>Admin Dashboard</Link>
           ) : (
             <Link className="hover:bg-blue-200 p-2 traslation" href="/cart" onClick={() => setShowMobileMenu(false)}>Cart</Link>
           )}

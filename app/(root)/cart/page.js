@@ -5,11 +5,13 @@ import toast from "react-hot-toast";
 import { MdDeleteForever } from "react-icons/md";
 
 export default function CartPage() {
+  
+  const [deleteIcon, setDeleteIcon] = useState(true);
   const [carts, setCarts] = useState([]);
   const [promoCode, setPromoCode] = useState("");
   const [discountRate, setDiscountRate] = useState(0);
 
-  // Reusable fetch function
+
   const fetchCart = async () => {
     try {
       const res = await fetch("/api/carts/");
@@ -27,17 +29,19 @@ export default function CartPage() {
   }, []);
 
   const handleDeleteItem = async (id) => {
+    
     try {
+      setDeleteIcon(false)
       const res = await fetch(`/api/carts/${id}`, { method: "DELETE" });
       const result = await res.json();
       if (!res.ok) throw new Error(result?.error || "Delete failed");
 
-      // Re-fetch updated cart from server
+
       await fetchCart();
 
       toast.success(`Item deleted successfully`);
     } catch (err) {
-      toast.error(err.error);
+      toast.error(err.message);
     }
   };
 
@@ -79,10 +83,12 @@ export default function CartPage() {
                     <p className="text-xl font-bold">${cart.price}</p>
                   </div>
                 </div>
+                {deleteIcon&&
                 <MdDeleteForever
                   className="cursor-pointer text-red-400 text-2xl"
                   onClick={() => handleDeleteItem(cart.product._id)}
-                />
+                />}
+                
               </div>
             ))
           ) : (

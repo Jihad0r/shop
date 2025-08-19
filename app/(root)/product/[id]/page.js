@@ -1,19 +1,22 @@
 "use client";
-import { useState, useEffect, useMemo } from "react";
-import { useParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import ReviewModal from "@/app/component/ReviewModal";
-import { useRouter } from "next/navigation";
 
 export default function ProductDetails() {
   const { id } = useParams();
   const router = useRouter();
+
   const [product, setProduct] = useState(null);
-  const [products, setProducts] = useState(null);
+  const [products, setProducts] = useState([]);
+  const [randomProducts, setRandomProducts] = useState([]);
   const [quantity, setQuantity] = useState(1);
+  const [availableQuantity, setAvailableQuantity] = useState(0);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [reviews, setReviews] = useState([]);
 
+  // ✅ Fetch single product
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -21,14 +24,16 @@ export default function ProductDetails() {
         if (!res.ok) throw new Error("Failed to fetch product");
         const data = await res.json();
         setProduct(data);
-        setReviews(data.reviews || []); // ✅ sync reviews state
+        setReviews(data.reviews || []);
+        setAvailableQuantity(data.inStock); // initial stock
       } catch (err) {
-        toast.error(err.error);
+        toast.error(err.message || "Error loading product");
       }
     };
     if (id) fetchProduct();
-  }, [id,showReviewModal]);
+  }, [id]);
 
+  // ✅ Fetch all products
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -36,37 +41,55 @@ export default function ProductDetails() {
         if (!res.ok) throw new Error("Failed to fetch products");
         const data = await res.json();
         setProducts(data);
+
+        // Pick 4 random products once
+        if (data.length > 0) {
+          setRandomProducts(
+            [...data].sort(() => Math.random() - 0.5).slice(0, 4)
+          );
+        }
       } catch (err) {
-        toast.error(err.error);
+        toast.error(err.message || "Error loading products");
       }
     };
     fetchProducts();
-  }, [setProducts]);
+  }, []);
 
+  // ✅ Add to cart
   const handleCart = async (id) => {
     try {
       const res = await fetch(`/api/carts/${id}`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ quantity })
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ quantity }),
       });
 
       const result = await res.json();
-      if (!res.ok) throw new Error(result?.error || "add item failed");
+      if (!res.ok) throw new Error(result?.error || "Failed to add item");
+
       toast.success(
         `Added ${quantity} item${quantity > 1 ? "s" : ""} successfully`
       );
+
+      // update available stock
+      handleQuantity(id);
     } catch (err) {
-      toast.error(err.error);
+      toast.error(err.message || "Error adding to cart");
     }
   };
 
-  const randomProducts = useMemo(() => {
-    if (!products || products.length === 0) return [];
-    return [...products].sort(() => Math.random() - 0.5).slice(0, 4);
-  }, [products]);
+  // ✅ Get remaining quantity after adding to cart
+  const handleQuantity = async (id) => {
+    try {
+      const res = await fetch(`/api/carts/${id}`);
+      const result = await res.json();
+      if (!res.ok) throw new Error(result?.error || "Failed to check cart");
+
+      setAvailableQuantity(product.inStock - result.totalQuantity);
+    } catch (err) {
+      toast.error(err.message || "Error updating stock");
+    }
+  };
 
   if (!product) {
     return <p className="text-center text-2xl font-bold py-20">Loading...</p>;
@@ -75,6 +98,7 @@ export default function ProductDetails() {
   return (
     <div className="max-w-7xl mx-auto px-6 lg:px-20 py-10">
       <div className="flex flex-col md:flex-row gap-10">
+        {/* Product Image */}
         <div className="flex w-full md:w-1/2 bg-gray-200 rounded-2xl gap-4 mb-4">
           <img
             src={product.image}
@@ -82,9 +106,12 @@ export default function ProductDetails() {
             className="w-full h-[400px] object-contain rounded-lg"
           />
         </div>
+
+        {/* Product Info */}
         <div className="w-full md:w-1/2 flex flex-col gap-4">
           <h1 className="text-2xl font-bold">{product.title}</h1>
-          <p>{product.inStock - quantity} available</p>
+          <p>{availableQuantity} available</p>
+
           {product.rate ? (
             <div className="flex items-center gap-2">
               <span className="text-yellow-400 text-xl">
@@ -93,8 +120,9 @@ export default function ProductDetails() {
               <p className="font-semibold">{product.rate}/5</p>
             </div>
           ) : (
-            <p className="">No Reviews</p>
+            <p>No Reviews</p>
           )}
+
           <div className="flex items-center gap-4">
             <span className="text-2xl font-bold">${product.price}</span>
             {product.oldPrice && (
@@ -124,17 +152,22 @@ export default function ProductDetails() {
               <button
                 className="px-3 py-2"
                 onClick={() =>
-                  setQuantity((q) => Math.min(product.inStock, q + 1))
+                  setQuantity((q) => Math.min(availableQuantity, q + 1))
                 }
               >
                 +
               </button>
             </div>
             <button
-              className="bg-black text-white px-6 py-3 rounded-lg cursor-pointer"
+              disabled={availableQuantity === 0}
+              className={`px-6 py-3 rounded-lg cursor-pointer ${
+                availableQuantity === 0
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-black text-white"
+              }`}
               onClick={() => handleCart(product._id)}
             >
-              Add to Cart
+              {availableQuantity === 0 ? "Out of Stock" : "Add to Cart"}
             </button>
           </div>
         </div>
@@ -180,33 +213,33 @@ export default function ProductDetails() {
           You Might Also Like
         </h2>
         <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-6">
-          {randomProducts.map((product) => (
+          {randomProducts.map((p) => (
             <div
-              key={product._id}
+              key={p._id}
               className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col cursor-pointer"
-              onClick={() => router.push(`/product/${product._id}`)}
+              onClick={() => router.push(`/product/${p._id}`)}
             >
               <div className="bg-gray-200 rounded-2xl">
                 <img
-                  src={product.image}
-                  alt={product.title}
+                  src={p.image}
+                  alt={p.title}
                   className="h-70 m-auto object-cover"
                 />
               </div>
               <div className="p-4 flex-1 flex flex-col justify-between">
                 <div>
-                  <h2 className="text-lg font-semibold">{product.title}</h2>
-                  {product.rate ? (
+                  <h2 className="text-lg font-semibold">{p.title}</h2>
+                  {p.rate ? (
                     <div className="flex items-center gap-2">
                       <span className="text-yellow-400 text-xl">
-                        {"★".repeat(product.rate)}
+                        {"★".repeat(p.rate)}
                       </span>
-                      <p className="font-semibold">{product.rate}/5</p>
+                      <p className="font-semibold">{p.rate}/5</p>
                     </div>
                   ) : (
                     <p>No Reviews</p>
                   )}
-                  <p className="font-bold mt-2">${product.price}</p>
+                  <p className="font-bold mt-2">${p.price}</p>
                 </div>
               </div>
             </div>
@@ -214,21 +247,23 @@ export default function ProductDetails() {
         </div>
       </div>
 
+      {/* Review Modal */}
       {showReviewModal && (
         <ReviewModal
-  productId={product._id}
-  onClose={() => setShowReviewModal(false)}
-  onReviewAdded={(newReview) => {
-    setProduct((prev) => ({
-      ...prev,
-      reviews: [...prev.reviews, newReview],
-      rate:
-        (prev.reviews.reduce((acc, r) => acc + r.rating, 0) + newReview.rating) /
-        (prev.reviews.length + 1),
-    }));
-  }}
-/>
-
+          productId={product._id}
+          onClose={() => setShowReviewModal(false)}
+          onReviewAdded={(newReview) => {
+            setReviews((prev) => [...prev, newReview]);
+            setProduct((prev) => ({
+              ...prev,
+              reviews: [...prev.reviews, newReview],
+              rate:
+                (prev.reviews.reduce((acc, r) => acc + r.rating, 0) +
+                  newReview.rating) /
+                (prev.reviews.length + 1),
+            }));
+          }}
+        />
       )}
     </div>
   );

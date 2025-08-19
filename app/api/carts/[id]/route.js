@@ -3,6 +3,7 @@ import Cart from "@/lib/models/Cart";
 import Product from "@/lib/models/Product";
 import { NextResponse } from "next/server";
 import { getUserFromRequest } from "@/utils/getUserFromToken";
+import mongoose from "mongoose";
 
 export async function POST(req, { params }) {
   try {
@@ -57,6 +58,34 @@ export async function POST(req, { params }) {
   }
 }
 
+export async function GET(req, { params }) {
+  try {
+    await dbConnect();
+
+    const { id: productId } = params;
+
+    const result = await Cart.aggregate([
+      { $unwind: "$items" }, 
+      { $match: { "items.product": new mongoose.Types.ObjectId(productId) } },
+      {
+        $group: {
+          _id: "$items.product",
+          totalQuantity: { $sum: "$items.quantity" },
+          userCount: { $sum: 1 }
+        }
+      }
+    ]);
+
+    if (!result || result.length === 0) {
+      return NextResponse.json({ message: "No orders for this product" }, { status: 404 });
+    }
+
+    return NextResponse.json(result[0]);
+  } catch (err) {
+    return NextResponse.json({ error: err.message }, { status: 500 });
+  }
+}
+
 export async function DELETE(req, { params }) {
   try {
     await dbConnect();
@@ -67,6 +96,12 @@ export async function DELETE(req, { params }) {
     if (!userId || userId === process.env.Admin) {
       return NextResponse.json({ error: "Users only" }, { status: 403 });
     }
+    const product = await Product.findById(productId);
+    
+    if (!product) {
+      return NextResponse.json({ error: "Product not found" }, { status: 404 });
+    }
+
 
     const cart = await Cart.findOne({ user: userId });
     if (!cart) {
@@ -84,7 +119,6 @@ export async function DELETE(req, { params }) {
       (item) => item.product.toString() !== productId.toString()
     );
 
-    const product = await Product.findById(productId);
     if (product) {
       product.inStock = Number(product.inStock) + itemInCart.quantity;
       await product.save();
