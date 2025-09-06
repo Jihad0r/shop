@@ -67,7 +67,7 @@ export default function CartPage() {
         <div className="w-full md:w-2/3 space-y-4 max-h-[500px] overflow-y-auto pr-2 border border-gray-200 p-4 rounded-2xl">
           {carts.length > 0 ? (
             carts.map((cart) => (
-              <div key={cart._id} className="flex justify-between gap-4 relative">
+              <div key={cart._id} className="flex justify-between rounded-2xl bg-gray-100 gap-4 relative">
                 <div className="flex">
                  <div className="bg-gray-200 p-2 rounded-2xl mr-2 min-w-28 h-28 flex items-center justify-center">
                     <img
@@ -77,15 +77,15 @@ export default function CartPage() {
                     />
                   </div>
 
-                  <div className="flex flex-col gap-2">
+                  <div className="flex flex-col gap-2 p-2">
                     <h1 className="text-xl font-bold">{cart.product.title}</h1>
-                    <p>Qty: {cart.quantity}</p>
+                    <p className="absolute right-1 bottom-1 bg-gray-200 rounded-full px-4 py-2">{cart.quantity}</p>
                     <p className="text-xl font-bold">${cart.price}</p>
                   </div>
                 </div>
                 {deleteIcon&&
                 <MdDeleteForever
-                  className="cursor-pointer text-red-400 text-2xl"
+                  className="cursor-pointer p-2 text-red-400 text-4xl"
                   onClick={() => handleDeleteItem(cart.product._id)}
                 />}
                 

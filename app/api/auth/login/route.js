@@ -4,7 +4,7 @@ import { dbConnect } from "@/lib/config/db";
 import User from "@/lib/models/User";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import { generateTokensAndSetCookie } from "@/middleware/generateToken";
+import { generateTokensAndSetCookie } from "@/lib/middleware/generateToken";
 
 
 export async function POST(req) {

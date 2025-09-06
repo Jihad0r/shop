@@ -63,7 +63,7 @@ export default function Navbar() {
           <ul className="flex gap-2 text-gray-700"> 
             <li className=" hover:bg-blue-400 py-4 px-1 hover:text-white  cursor-pointer traslation" ><Link href="/">Home</Link></li>
             <li className=" hover:bg-blue-400 py-4 px-1 hover:text-white  cursor-pointer traslation" ><Link href="/T-shirts">Shirts</Link></li>
-            <li className=" hover:bg-blue-400 py-4 px-1 hover:text-white  cursor-pointer traslation" ><Link href="/shoes">Shoses</Link></li>
+            <li className=" hover:bg-blue-400 py-4 px-1 hover:text-white  cursor-pointer traslation" ><Link href="/shoes">Shoes</Link></li>
             <li className=" hover:bg-blue-400 py-4 px-1 hover:text-white  cursor-pointer traslation" ><Link href="/coats">Coats</Link></li>
             <li className=" hover:bg-blue-400 py-4 px-1 hover:text-white  cursor-pointer traslation" ><Link href="/shorts">Shorts</Link></li>
             <li className=" hover:bg-blue-400 py-4 px-1 hover:text-white  cursor-pointer traslation" ><Link href="/others">Others</Link></li>
@@ -155,7 +155,7 @@ export default function Navbar() {
           <Link className="hover:bg-blue-200 p-2  traslation" onClick={() => setShowMobileMenu(false)}href="/coats">Coats</Link>
           <Link className="hover:bg-blue-200 p-2  traslation"href="/shorts" onClick={() => setShowMobileMenu(false)}>Shorts </Link>
           
-          <Link className="hover:bg-blue-200 p-2   traslation" onClick={() => setShowMobileMenu(false)} href="/shoes">Shoses</Link>
+          <Link className="hover:bg-blue-200 p-2   traslation" onClick={() => setShowMobileMenu(false)} href="/shoes">Shoes</Link>
           
           <Link className="hover:bg-blue-200 p-2  traslation" onClick={() => setShowMobileMenu(false)}href="/others">Others</Link>
           {isAdmin ? (
