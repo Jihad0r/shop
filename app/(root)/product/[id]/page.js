@@ -244,7 +244,7 @@ export default function ProductDetails() {
                 <div className="pt-4 flex-1 flex flex-col justify-between">
                   <div>
                     <h2 className="text-lg font-semibold text-nowrap">{product.title}</h2>
-                      <p className={` font-bold absolute right-1 bottom-1 ${Number(availableQuantity) === 0 ? "text-red-400" : "text-green-400"}`}>{Number(availableQuantity) === 0 ? "Out of Stock" : "In Stock"}</p>
+                      <p className={` font-bold absolute right-1 bottom-1 ${Number(products.inStock) === 0 ? "text-red-400" : "text-green-400"}`}>{Number(products.inStock) === 0 ? "Out of Stock" : "In Stock"}</p>
                  
                   {product.rate ? (
             <div className="flex items-center gap-2">
