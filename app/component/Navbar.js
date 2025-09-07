@@ -159,9 +159,23 @@ export default function Navbar() {
           
           <Link className="hover:bg-blue-200 p-2  traslation" onClick={() => setShowMobileMenu(false)}href="/others">Others</Link>
           {isAdmin ? (
-            <Link className="hover:bg-blue-200 p-2  traslation" href="/admin" onClick={() => setShowMobileMenu(false)}>Admin Dashboard</Link>
+            <Link
+              className="hover:bg-blue-200 p-2 traslation"
+              href="/admin"
+              onClick={() => setShowMobileMenu(false)}
+            >
+              Admin Dashboard
+            </Link>
           ) : (
-            <Link className="hover:bg-blue-200 p-2 traslation" href="/cart" onClick={() => setShowMobileMenu(false)}>Cart</Link>
+            user && (
+              <Link
+                className="hover:bg-blue-200 p-2 traslation"
+                href="/cart"
+                onClick={() => setShowMobileMenu(false)}
+              >
+                Cart
+              </Link>
+            )
           )}
         </div>
       )}
