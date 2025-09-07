@@ -63,7 +63,8 @@ export default function Login() {
   };
 
   return (
-    <div className="max-w-md background text-gray-700 mx-auto mt-30 p-6 border border-blue-200 rounded-lg shadow">
+    
+    <div className="max-w-[80%] md:max-w-md background text-gray-700 m-auto mt-30 p-6 border border-blue-200 rounded-lg shadow-xl">
       <h2 className="text-2xl font-bold mb-4">Login</h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">
