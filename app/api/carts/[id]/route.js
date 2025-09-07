@@ -25,7 +25,7 @@ export async function POST(req, { params }) {
 
     // Check stock before adding to cart
     if (product.inStock < qty) {
-      return NextResponse.json({ error: "Not enough stock" }, { status: 400 });
+      return NextResponse.json({ error: "Out of Stock" }, { status: 400 });
     }
 
     let cart = await Cart.findOne({ user: userId });

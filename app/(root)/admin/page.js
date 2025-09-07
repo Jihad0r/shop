@@ -105,6 +105,7 @@ export default function AdminPage() {
             <div className="p-4 flex-1 flex flex-col justify-between">
               <div>
                 <h2 className="text-lg font-semibold">{product.title}</h2>
+                <p className={`font-bold ${Number(product.inStock) === 0 ? "text-red-400" : "text-green-400"}`}>{Number(product.inStock) === 0 ? "Out of Stock" : "In Stock"}</p>
                 <p className="text-gray-500">{product.category}</p>
                 <p className="text-green-600 font-bold mt-2">${product.price}</p>
               </div>

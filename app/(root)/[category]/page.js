@@ -41,7 +41,7 @@ export default function Home() {
         products.map((product) => (
               <div
                 key={product._id}
-                className="rounded-lg overflow-hidden flex flex-col cursor-pointer"
+                className="rounded-lg overflow-hidden flex flex-col cursor-pointer relative"
                 onClick={() => router.push(`/product/${product._id}`)}
               >
             
@@ -57,6 +57,7 @@ export default function Home() {
                   <div>
                     <h2 className="text-lg font-semibold text-nowrap">{product.title}</h2>
                    
+                <p className={`font-bold absolute right-1 bottom-1  ${Number(product.inStock) === 0 ? "text-red-400" : "text-green-400"}`}>{Number(product.inStock) === 0 ? "Out of Stock" : "In Stock"}</p>
                    
                  {product.rate ? (
             <div className="flex items-center gap-2">

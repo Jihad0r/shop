@@ -89,7 +89,7 @@ export default function Home() {
   randomProducts.map((product) => (
     <div
       key={product._id}
-      className="rounded-lg overflow-hidden flex flex-col cursor-pointer"
+      className="rounded-lg overflow-hidden flex flex-col cursor-pointer relative"
       onClick={() => router.push(`/product/${product._id}`)}
     >
   
@@ -104,8 +104,7 @@ export default function Home() {
       <div className="pt-4 flex-1 flex flex-col justify-between">
         <div>
           <h2 className="text-lg font-semibold text-nowrap">{product.title}</h2>
-         
-         
+          <p className={`font-bold absolute right-1 bottom-1  ${Number(product.inStock) === 0 ? "text-red-400" : "text-green-400"}`}>{Number(product.inStock) === 0 ? "Out of Stock" : "In Stock"}</p>     
        {product.rate ? (
   <div className="flex items-center gap-2">
     <div className="flex text-yellow-400 text-xl">
