@@ -13,6 +13,11 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const metadata = {
+  title: "J0 Store",
+  description: "your favorite store",
+};
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">

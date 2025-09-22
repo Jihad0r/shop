@@ -12,18 +12,19 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const res = await fetch("/api/products/product");
-        if (!res.ok) throw new Error("Failed to fetch products");
-        const data = await res.json();
-        setProducts(data);
-      } catch (err) {
+  const fetchProducts = async () => {
+    try {
+      const res = await fetch("/api/products/product"); 
+      if (!res.ok) throw new Error("Failed to fetch products");
+      const data = await res.json();
+      setProducts(data);
+    } catch (err) {
         toast.error(err.error);
-      }
-    };
-    fetchProducts();
-  }, [setProducts]);
+    }
+  };
+  fetchProducts();
+}, [setProducts]);
+
 
   const randomProducts = useMemo(() => {
     if (!products || products.length === 0) return [];
