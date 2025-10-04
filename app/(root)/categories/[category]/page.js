@@ -8,7 +8,7 @@ import { FaRegStar, FaStar, FaStarHalfAlt } from "react-icons/fa";
 export default function Home() {
   const { category } = useParams();
   const router = useRouter();
-  const [products, setProducts] = useState([]); // array
+  const [products, setProducts] = useState([]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -24,14 +24,6 @@ export default function Home() {
 
     if (category) fetchProducts();
   }, [category]);
-
-  // Loading state
-  if (products.length === 0) {
-    return (
-      <div className="min-h-100">
-      <p className="text-center text-2xl font-bold py-20">Loading...</p></div>
-    );
-  }
 
   return (
     <div>
@@ -87,11 +79,10 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-            ))
-          ) : (
-            <p className="text-center text-2xl font-bold py-20">Loading...</p>
-          )}
+            ))) : (
+            <p className=" col-span-4 text-center text-4xl">No products found</p>
+            )}
     </div>
-    </div>
-  );
+  </div>
+);
 }

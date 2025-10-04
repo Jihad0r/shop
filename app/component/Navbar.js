@@ -2,7 +2,7 @@
 import Link from "next/link";
 import toast from "react-hot-toast";
 import useAuthStore from "./authStore";
-import { useEffect, useState } from "react";
+import {useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FiSearch, FiMenu, FiX } from "react-icons/fi"; // search + hamburger + close icons
 import ProductStore from "./ProductStore";
@@ -47,31 +47,24 @@ export default function Navbar() {
 
   return (
     <nav className="h-fit bg-white px-2 shadow-md w-full">
-      {/* Top bar */}
       <div className="flex justify-around items-center">
-        {/* Logo + Hello */}
         <div className="flex items-center gap-3">
           <Link href="/" className="text-xl font-bold">
             SHOP
           </Link>
           {user && <span className="text-sm text-gray-600">Hello {user.username}</span>}
         </div>
-
-        {/* Desktop Menu */}
         <div className="hidden md:flex items-center gap-5 justify-between">
-          {/* Nav Links */}
           <ul className="flex gap-2 text-gray-700"> 
-            <li className=" hover:bg-blue-400 py-4 px-1 hover:text-white  cursor-pointer traslation" ><Link href="/">Home</Link></li>
-            <li className=" hover:bg-blue-400 py-4 px-1 hover:text-white  cursor-pointer traslation" ><Link href="/T-shirts">Shirts</Link></li>
-            <li className=" hover:bg-blue-400 py-4 px-1 hover:text-white  cursor-pointer traslation" ><Link href="/shoes">Shoes</Link></li>
-            <li className=" hover:bg-blue-400 py-4 px-1 hover:text-white  cursor-pointer traslation" ><Link href="/coats">Coats</Link></li>
-            <li className=" hover:bg-blue-400 py-4 px-1 hover:text-white  cursor-pointer traslation" ><Link href="/shorts">Shorts</Link></li>
-            <li className=" hover:bg-blue-400 py-4 px-1 hover:text-white  cursor-pointer traslation" ><Link href="/others">Others</Link></li>
-            {user && !isAdmin &&<li className=" hover:bg-blue-400 py-4 px-1 hover:text-white cursor-pointer  traslation" ><Link  href="/cart">Cart</Link></li>}
+            <Link href="/"><li className=" hover:bg-blue-400 py-4 px-1 hover:text-white  cursor-pointer traslation" >Home</li></Link>
+            <Link href="/categories/T-shirts"><li className=" hover:bg-blue-400 py-4 px-1 hover:text-white  cursor-pointer traslation" >Shirts</li></Link>
+            <Link href="/categories/shoes"><li className=" hover:bg-blue-400 py-4 px-1 hover:text-white  cursor-pointer traslation" >Shoes</li></Link>
+            <Link href="/categories/coats"><li className=" hover:bg-blue-400 py-4 px-1 hover:text-white  cursor-pointer traslation" >Coats</li></Link>
+            <Link href="/categories/shorts"><li className=" hover:bg-blue-400 py-4 px-1 hover:text-white  cursor-pointer traslation" >Shorts</li></Link>
+            <Link href="/categories/others"><li className=" hover:bg-blue-400 py-4 px-1 hover:text-white  cursor-pointer traslation" >Others</li></Link>
+            {user && !isAdmin &&<Link  href="/cart"><li className=" hover:bg-blue-400 py-4 px-1 hover:text-white cursor-pointer  traslation" >Cart</li></Link>}
             
           </ul>
-
-          {/* Search input */}
           {isAdmin &&
           <div className="border-2 border-gray-300 w-2/3 rounded-full px-3 py-1">
             <input
