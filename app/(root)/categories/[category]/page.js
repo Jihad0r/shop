@@ -3,8 +3,9 @@ import { FaRegStar, FaStar, FaStarHalfAlt } from "react-icons/fa";
 import { DollarSign, Tag, AlertCircle, CheckCircle } from "lucide-react";
 
 async function getProducts(category) {
+   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "";
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"}/api/products/${category}`, {
+    const res = await fetch(`${baseUrl}/api/products/${category}`, {
       cache: 'no-store', 
     })
     

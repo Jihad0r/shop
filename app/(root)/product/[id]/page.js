@@ -2,8 +2,9 @@ import { notFound } from "next/navigation";
 import ProductDetailsClient from "../../../component/ProductDetailsClient.js";
 
 async function getProduct(id) {
+   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "";
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/products/product/${id}`, {
+    const res = await fetch(`${baseUrl}/api/products/product/${id}`, {
       cache: "no-store",
     });
     if (!res.ok) return null;
@@ -14,8 +15,10 @@ async function getProduct(id) {
 }
 
 async function getProducts() {
+  
+   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "";
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/products/product`, {
+    const res = await fetch(`${baseUrl}/api/products/product`, {
       cache: "no-store",
     });
     if (!res.ok) return [];
