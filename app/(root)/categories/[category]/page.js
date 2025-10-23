@@ -4,7 +4,7 @@ import { DollarSign, Tag, AlertCircle, CheckCircle } from "lucide-react";
 
 async function getProducts(category) {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/products/${category}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"}/api/products/${category}`, {
       cache: 'no-store', 
     })
     
