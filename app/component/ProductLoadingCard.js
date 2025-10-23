@@ -11,7 +11,7 @@ export default function ProductLoadingCard() {
             className="animate-pulse rounded-lg overflow-hidden flex flex-col cursor-pointer relative"
           >
             <div className="bg-gray-300 p-2 rounded-2xl w-full md:min-w-60 h-100 flex items-center justify-center">
-              <div className="w-full h-40 bg-gray-400 rounded-lg"></div>
+              
             </div>
             <div className="pt-4 flex-1 flex flex-col justify-between">
               <div>

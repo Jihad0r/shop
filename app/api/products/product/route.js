@@ -9,12 +9,13 @@ export async function GET() {
   try {
     await dbConnect();
     const products = await Product.find();
+    console.log("products:",products)
     return NextResponse.json(products);
   } catch (err) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
-
+ 
 
 export async function POST(req) {
   try {

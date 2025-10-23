@@ -11,7 +11,7 @@ import Image from "next/image";
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-100 text-gray-700">
+    <footer className="bg-gray-200 text-gray-700">
       <div className="mx-auto px-6 py-12 flex flex-col md:flex-row justify-between gap-8">
         <div >
           <h3 className="text-2xl font-bold mb-4">SHOP.CO</h3>

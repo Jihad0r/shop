@@ -56,7 +56,9 @@ export default function Home() {
       </div>
       <div className="px-6 py-10 bg-white z-[100] relative">
         <h1 className="text-6xl text-center font-bold mb-6">For You</h1>
+        <Suspense fallback={<ProductLoadingCard/>}>
           <ForYou />
+        </Suspense>
       </div>
     </>
   );
