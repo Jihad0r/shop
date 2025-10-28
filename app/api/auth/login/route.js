@@ -32,6 +32,10 @@ export async function POST(req) {
       return NextResponse.json({ error: "Incorrect password" }, { status: 401 });
     }
 
+    if (user.state === "discontinue") {
+      return NextResponse.json({ error: "User is not Allow to login at the time" }, { status: 401 });
+    }
+
     const response = NextResponse.json({
       username: user.username,
       email: user.email,

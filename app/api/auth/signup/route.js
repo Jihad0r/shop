@@ -1,17 +1,18 @@
 import { dbConnect } from "@/lib/config/db";
 import User from "@/lib/models/User";
-import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import { generateTokensAndSetCookie } from "@/lib/middleware/generateToken";
+import crypto from "crypto";
+import { NextResponse } from "next/server";
+import { sendEmail } from "@/utils/sendEmail";
 
 export async function POST(req) {
   try {
     await dbConnect();
 
-    const formData = await req.formData();
-    const username = formData.get("username");
-    const email = formData.get("email");
-    const password = formData.get("password");
+    const data = await req.json();
+    const username = data.username;
+    const email = data.email;
+    const password = data.password;
 
     if (!username || !email || !password) {
       return NextResponse.json({ error: "All fields are required" }, { status: 400 });
@@ -28,15 +29,42 @@ export async function POST(req) {
 
     const existingUser = await User.findOne({ $or: [{ username }, { email }] });
     if (existingUser) {
-      const isEmailTaken = existingUser.email === email;
       return NextResponse.json({
-        error: isEmailTaken ? "Email already in use" : "Username already taken"
+        error: existingUser.email === email ? "Email already in use" : "Username already taken",
       }, { status: 400 });
     }
 
-    const hash = await bcrypt.hash(password, 10);
-    const newUser = new User({ username, email, password: hash });
-    await newUser.save();
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const verificationToken = crypto.randomBytes(32).toString("hex");
+    const hashedToken = crypto.createHash("sha256").update(verificationToken).digest("hex");
+    const tokenExpire = Date.now() + 1000 * 60 * 30; 
+
+    const newUser = await User.create({
+      username,
+      email,
+      password: hashedPassword,
+      isVerified: false,
+      emailVerificationToken: hashedToken,
+      emailVerificationExpire: tokenExpire,
+    });
+
+    const verifyUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/verify-email?token=${verificationToken}`;
+
+    const htmlMessage = `
+      <div style="font-family: Arial, sans-serif;">
+        <h2>Verify your email</h2>
+        <p>Hi ${username}, please verify your email address by clicking the button below:</p>
+        <a href="${verifyUrl}" style="display:inline-block; padding:10px 20px; background:#0070f3; color:white; border-radius:5px; text-decoration:none;">Verify Email</a>
+        <p>This link will expire in 30 minutes.</p>
+      </div>
+    `;
+
+    await sendEmail({
+      to: email,
+      subject: "Verify Your Email",
+      html: htmlMessage,
+    });
 
     const safeUser = {
       _id: newUser._id,
@@ -44,12 +72,13 @@ export async function POST(req) {
       email: newUser.email,
     };
 
-    let response = NextResponse.json(safeUser, { status: 201 });
+    return NextResponse.json({
+      message: "Signup successful! Please check your email to verify your account.",
+      user: safeUser,
+    }, { status: 201 });
 
-    await generateTokensAndSetCookie(newUser._id, response);
-    return response;
-
-  } catch (err) {
+  } catch (error) {
+    console.error("Signup Error:", error);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
