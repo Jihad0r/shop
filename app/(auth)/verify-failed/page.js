@@ -1,15 +1,15 @@
 "use client";
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 
-export default function VerifyFailed() {
+function VerifyFailedContent() {
   const params = useSearchParams();
   const reason = params.get("reason");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
 
   const handleResend = async () => {
-    const res = await fetch("/api/auth/resend-verification", {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/resend-verification`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
@@ -46,5 +46,13 @@ export default function VerifyFailed() {
         {message && <p className="text-sm text-green-600 mt-3">{message}</p>}
       </div>
     </div>
+  );
+}
+
+export default function VerifyFailed() {
+  return (
+    <Suspense fallback={<p className="text-center mt-10">Loading...</p>}>
+      <VerifyFailedContent />
+    </Suspense>
   );
 }
