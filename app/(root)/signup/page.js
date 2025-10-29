@@ -2,9 +2,11 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import useAuthStore from "@/app/component/authStore";
 
 export default function CreateAccount() {
   const router = useRouter();
+    const { setUser } = useAuthStore();
 
   const [formData, setFormData] = useState({
     username: "",
@@ -19,36 +21,35 @@ export default function CreateAccount() {
     }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    const form = new FormData();
-    form.append("username", formData.username);
-    form.append("email", formData.email);
-    form.append("password", formData.password);
+  const loadingToast = toast.loading("Signing up...");
 
-    const loadingToast = toast.loading("Signing up...");
-
-    try {
-      const res = await fetch("/api/auth/signup", {
+  try {
+    const res = await fetch("/api/auth/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
     });
-      const data = await res.json();
-      toast.dismiss(loadingToast);
-      if (!res.ok) {
-        toast.error(data.error || "Account creation failed");
-        return;
-      }
 
-      toast.success("Signup successful");
-      router.push("/");
-    } catch (err) {
-      toast.dismiss(loadingToast);
-      toast.error(err.message || "Something went wrong");
+    const data = await res.json();
+    toast.dismiss(loadingToast);
+
+    if (!res.ok) {
+      toast.error(data.error || "Account creation failed");
+      return;
     }
-  };
+
+    toast.success("Signup successful");
+    setUser(data.user)
+    router.push("/");
+  } catch (err) {
+    toast.dismiss(loadingToast);
+    toast.error(err.message || "Something went wrong");
+  }
+};
+
 
   return (
     <div className="max-w-xl mx-auto mt-12 px-4">

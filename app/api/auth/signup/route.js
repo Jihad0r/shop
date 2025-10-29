@@ -4,15 +4,14 @@ import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import { NextResponse } from "next/server";
 import { sendEmail } from "@/utils/sendEmail";
+import { generateTokensAndSetCookie } from "@/lib/middleware/generateToken";
 
 export async function POST(req) {
   try {
     await dbConnect();
 
     const data = await req.json();
-    const username = data.username;
-    const email = data.email;
-    const password = data.password;
+    const { username, email, password } = data;
 
     if (!username || !email || !password) {
       return NextResponse.json({ error: "All fields are required" }, { status: 400 });
@@ -38,7 +37,7 @@ export async function POST(req) {
 
     const verificationToken = crypto.randomBytes(32).toString("hex");
     const hashedToken = crypto.createHash("sha256").update(verificationToken).digest("hex");
-    const tokenExpire = Date.now() + 1000 * 60 * 30; 
+    const tokenExpire = Date.now() + 1000 * 60 * 30; // 30 دقيقة
 
     const newUser = await User.create({
       username,
@@ -50,7 +49,6 @@ export async function POST(req) {
     });
 
     const verifyUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/verify-email?token=${verificationToken}`;
-
     const htmlMessage = `
       <div style="font-family: Arial, sans-serif;">
         <h2>Verify your email</h2>
@@ -66,18 +64,15 @@ export async function POST(req) {
       html: htmlMessage,
     });
 
-    const safeUser = {
-      _id: newUser._id,
+    const response = NextResponse.json({
       username: newUser.username,
       email: newUser.email,
-    };
-
-    generateTokensAndSetCookie(newUser._id, safeUser);
-
-    return NextResponse.json({
-      message: "Signup successful! Please check your email to verify your account.",
-      user: safeUser,
+      isVerified: newUser.isVerified,
     }, { status: 201 });
+
+    await generateTokensAndSetCookie(newUser._id, response);
+
+    return response;
 
   } catch (error) {
     console.error("Signup Error:", error);
