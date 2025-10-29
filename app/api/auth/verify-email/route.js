@@ -11,7 +11,7 @@ export async function GET(req) {
     const token = searchParams.get("token");
 
     if (!token) {
-      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/verify-failed?reason=invalid`);
+      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/verify-failed?reason=invalid`);
     }
 
     const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
@@ -23,7 +23,7 @@ export async function GET(req) {
 
     if (!user) {
       // Token invalid or expired
-      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/verify-failed?reason=expired`);
+      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/verify-failed?reason=expired`);
     }
 
     // ✅ Verify user
