@@ -72,6 +72,8 @@ export async function POST(req) {
       email: newUser.email,
     };
 
+    generateTokensAndSetCookie(newUser._id, safeUser);
+
     return NextResponse.json({
       message: "Signup successful! Please check your email to verify your account.",
       user: safeUser,

@@ -37,7 +37,6 @@ export default function CreateAccount() {
     });
       const data = await res.json();
       toast.dismiss(loadingToast);
-      alert(data.message);
       if (!res.ok) {
         toast.error(data.error || "Account creation failed");
         return;
