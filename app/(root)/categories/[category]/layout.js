@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 
 export default function RootLayout({ children,params }) {
   
-  const { category } = params;
+  const { category } =  params;
   return (
       <>
            <Toaster position="top-center" reverseOrder={false} />

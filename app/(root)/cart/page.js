@@ -3,28 +3,24 @@
 import { useEffect, useState } from "react";
 import { ShoppingCart, Trash2, Tag, Package, TrendingUp } from "lucide-react";
 import Link from "next/link";
+import toast from "react-hot-toast";
 
 export default function CartPage() {
   const [deleteIcon, setDeleteIcon] = useState(true);
   const [carts, setCarts] = useState([]);
   const [promoCode, setPromoCode] = useState("");
   const [discountRate, setDiscountRate] = useState(0);
-  const [toastMessage, setToastMessage] = useState("");
-
-  const showToast = (message, type = "success") => {
-    setToastMessage({ message, type });
-    setTimeout(() => setToastMessage(""), 3000);
-  };
+  
 
   const fetchCart = async () => {
     try {
-      const res = await fetch("/api/carts/");
+      const res = await fetch("/api/carts/cart");
       if (!res.ok) throw new Error("Failed to fetch cart");
 
       const data = await res.json();
       setCarts(data.items || []);
     } catch (err) {
-      showToast(err.message, "error");
+       toast.error(err.message || "Error fetching cart.");
     }
   };
 
@@ -40,21 +36,22 @@ export default function CartPage() {
       if (!res.ok) throw new Error(result?.error || "Delete failed");
 
       await fetchCart();
-      showToast("Item removed from cart");
+       toast.success("Item removed from cart");
     } catch (err) {
-      showToast(err.message, "error");
+       toast.error(err.message || "Item didn't remove from cart.");
     } finally {
       setDeleteIcon(true);
     }
   };
 
   const applyPromo = () => {
-    if (promoCode.trim().toUpperCase() === "SAVE30") {
+    if (promoCode.trim().toUpperCase() === process.env.Discount) {
       setDiscountRate(0.3);
-      showToast("Promo code applied! 30% off");
+      
+      toast.success("Promo code applied! 30% off");
     } else {
       setDiscountRate(0);
-      showToast("Invalid promo code", "error");
+      toast.error("Invalid promo code");
     }
   };
 
@@ -63,21 +60,6 @@ export default function CartPage() {
 
   return (
     <div className="min-h-screen ">
-      {/* Toast Notification */}
-      {toastMessage && (
-        <div className="fixed top-4 right-4 z-50 animate-fade-in">
-          <div
-            className={` rounded-lg shadow-lg ${
-              toastMessage.type === "error"
-                ? "bg-red-500 text-white"
-                : "bg-green-500 text-white"
-            }`}
-          >
-            {toastMessage.message}
-          </div>
-        </div>
-      )}
-
       <div className="w-full p-6 lg:p-8 bg-gray-50">
         {/* Header */}
         <div className="mb-8">
@@ -144,7 +126,7 @@ export default function CartPage() {
                     </div>
                   ))
                 ) : (
-                  <div className="text-center py-16">
+                  <div key={""} className="text-center py-16">
                     <ShoppingCart className="w-24 h-24 mx-auto text-gray-300 mb-4" />
                     <p className="text-2xl font-semibold text-gray-400">Your cart is empty</p>
                     <p className="text-gray-400 mt-2">Add items to get started</p>
@@ -215,9 +197,10 @@ export default function CartPage() {
                 </div>
                 <p className="text-sm text-gray-500 text-right">Estimated delivery: 1-3 days</p>
               </div>
+              {carts.length > 0 &&
               <Link href={"/payment"}><button className="w-full bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors font-medium py-4 rounded-2xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
                 Proceed to Checkout
-              </button></Link>
+              </button></Link>}
               
 
               {/* Security Badge */}

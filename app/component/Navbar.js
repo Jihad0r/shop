@@ -13,15 +13,30 @@ export default function Navbar({setShowLogin}) {
   const [showSearch, setShowSearch] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  
+  const [carts, setCarts] = useState([]);
   const { searchQuery, setSearchQuery } = ProductStore();
-
+   
   useEffect(() => {
     if (!user) {
       checkAuth(router);
     }
   }, [user, checkAuth, router]);
 
+   const fetchCart = async () => {
+      try {
+        const res = await fetch("/api/carts/cart");
+        if (!res.ok) throw new Error("Failed to fetch cart");
+  
+        const data = await res.json();
+        setCarts(data.items || []);
+      } catch (err) {
+         toast.error(err.message);
+      }
+    };
+  
+    useEffect(() => {
+      fetchCart();
+    }, []);
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 10);
@@ -49,7 +64,7 @@ export default function Navbar({setShowLogin}) {
       toast.error(err?.message || "Something went wrong");
     }
   };
-
+  
   const categories = [
     { name: "Home", href: "/" },
     { name: "Shirts", href: "/categories/T-shirts"},
@@ -126,14 +141,13 @@ export default function Navbar({setShowLogin}) {
 
             {/* Desktop User Controls */}
             <div className="hidden lg:flex items-center gap-3">
-              {user && !isAdmin && (
                 <Link
                   href="/cart"
                   className="group relative font-medium hover:text-indigo-600 transition-colors"
                 >
+                  {carts.length > 0 &&<div className="rounded-full text-white font-bold w-5 h-5 absolute -right-1 -top-2  bg-red-500"><span className="px-1.5 ">{carts.length}</span></div>}
                    <ShoppingBasket />
                 </Link>
-              )} 
 
               {isAdmin && (
                 <Link
@@ -265,7 +279,6 @@ export default function Navbar({setShowLogin}) {
                   );
                 })}
 
-                {user && !isAdmin && (
                   <Link
                     href="/cart"
                     onClick={() => setShowMobileMenu(false)}
@@ -275,7 +288,6 @@ export default function Navbar({setShowLogin}) {
                       Cart
                     </span>
                   </Link>
-                )}
 
                 {isAdmin && (
                   <Link

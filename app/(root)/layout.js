@@ -27,11 +27,11 @@ export default function RootLayout({ children }) {
       <body
         className={`${showLogin && "overflow-hidden "}${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Toaster position="top-center" reverseOrder={false} />
+        <Toaster position="top-right" reverseOrder={false} />
         <Navbar setShowLogin={setShowLogin}/>
         {showLogin && <Login showLogin={showLogin} setShowLogin={setShowLogin}/>}
         {children}
-        {pathname !== "/signup" && <Footer/>}
+        {pathname !== "/signup" || pathname !== "/admin" && <Footer/>}
       </body>
     </html>
   );

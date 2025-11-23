@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import ReviewModal from "@/app/component/ReviewModal";
 import { FaRegStar, FaStar, FaStarHalfAlt } from "react-icons/fa";
@@ -9,46 +8,49 @@ import Link from "next/link";
 import { DollarSign, Tag, AlertCircle, CheckCircle } from "lucide-react";
 
 export default function ProductDetailsClient({ product: initialProduct, randomProducts }) {
-  const router = useRouter();
-  console.log(initialProduct);
-  
-
   const [product, setProduct] = useState(initialProduct);
   const [quantity, setQuantity] = useState(1);
   const [availableQuantity, setAvailableQuantity] = useState(initialProduct.inStock);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [reviews, setReviews] = useState(initialProduct.reviews || []);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
 
   const handleCart = async (id) => {
+    // Prevent double-clicking
+    if (isAddingToCart) return;
+    
+    setIsAddingToCart(true);
+    
     try {
       const res = await fetch(`/api/carts/${id}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ quantity }),
+        credentials: "include", // Important for cookies
       });
 
       const result = await res.json();
-      if (!res.ok) throw new Error(result?.error || "Failed to add item");
-
+      
+      if (!res.ok) {
+        throw new Error(result?.error || "Failed to add item");
+      }
+      
+      // Success message
       toast.success(
-        `Added ${quantity} item${quantity > 1 ? "s" : ""} successfully`
+        `Added ${quantity} item${quantity > 1 ? "s" : ""} to cart successfully!`
       );
-
-      handleQuantity(id);
+      
+      // Update available quantity
+      setAvailableQuantity((prev) => Math.max(0, prev - quantity));
+      
+      // Reset quantity to 1 after adding
+      setQuantity(1);
+      
     } catch (err) {
-      toast.error(err.message || "Error adding to cart");
-    }
-  };
-
-  const handleQuantity = async (id) => {
-    try {
-      const res = await fetch(`/api/carts/${id}`);
-      const result = await res.json();
-      if (!res.ok) throw new Error(result?.error || "Failed to check cart");
-
-      setAvailableQuantity(product.inStock - result.totalQuantity);
-    } catch (err) {
-      toast.error(err.message || "Error updating stock");
+      console.error("Cart error:", err);
+      toast.error(err.message || "Error adding to cart. Please try again.");
+    } finally {
+      setIsAddingToCart(false);
     }
   };
 
@@ -67,7 +69,23 @@ export default function ProductDetailsClient({ product: initialProduct, randomPr
         {/* Product Info */}
         <div className="w-full md:w-1/2 flex flex-col gap-4">
           <h1 className="text-2xl font-bold">{product.title}</h1>
-          <p>{availableQuantity} available</p>
+          
+          {/* Stock indicator */}
+          <div className="flex items-center gap-2">
+            {availableQuantity > 0 ? (
+              <>
+                <CheckCircle className="w-5 h-5 text-green-600" />
+                <p className="text-green-600 font-semibold">
+                  {availableQuantity} available
+                </p>
+              </>
+            ) : (
+              <>
+                <AlertCircle className="w-5 h-5 text-red-600" />
+                <p className="text-red-600 font-semibold">Out of stock</p>
+              </>
+            )}
+          </div>
 
           {product.rate ? (
             <div className="flex items-center gap-2">
@@ -113,33 +131,44 @@ export default function ProductDetailsClient({ product: initialProduct, randomPr
           <div className="flex gap-4 mt-4">
             <div className="flex items-center border rounded-lg">
               <button
-                className="px-3 py-2"
+                className="px-3 py-2 hover:bg-gray-100 transition-colors disabled:opacity-50"
                 onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                disabled={availableQuantity === 0 || isAddingToCart}
               >
                 -
               </button>
-              <span className="px-4">{quantity}</span>
+              <span className="px-4 min-w-[40px] text-center">{quantity}</span>
               <button
-                className="px-3 py-2"
+                className="px-3 py-2 hover:bg-gray-100 transition-colors disabled:opacity-50"
                 onClick={() =>
                   setQuantity((q) => Math.min(availableQuantity, q + 1))
                 }
+                disabled={availableQuantity === 0 || isAddingToCart}
               >
                 +
               </button>
             </div>
             <button
-              disabled={availableQuantity === 0}
-              className={`px-6 py-3 rounded-lg cursor-pointer ${
-                availableQuantity === 0
+              disabled={availableQuantity === 0 || isAddingToCart}
+              className={`px-6 py-3 rounded-lg font-semibold transition-all ${
+                availableQuantity === 0 || isAddingToCart
                   ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-black text-white"
+                  : "bg-black text-white hover:bg-gray-800 active:scale-95"
               }`}
               onClick={() => handleCart(product._id)}
             >
-              {Number(availableQuantity) === 0 ? "Out of Stock" : "Add to Cart"}
+              {isAddingToCart 
+                ? "Adding..." 
+                : availableQuantity === 0 
+                ? "Out of Stock" 
+                : "Add to Cart"}
             </button>
           </div>
+
+          {/* Guest info message */}
+          <p className="text-sm text-gray-500 mt-2">
+            💡 You can add items to cart without an account. Your cart will be saved when you sign up!
+          </p>
         </div>
       </div>
 
@@ -148,7 +177,7 @@ export default function ProductDetailsClient({ product: initialProduct, randomPr
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-bold">All Reviews ({reviews.length})</h2>
           <span
-            className="bg-black rounded-2xl text-white font-bold cursor-pointer py-4 px-6"
+            className="bg-black rounded-2xl text-white font-bold cursor-pointer py-4 px-6 hover:bg-gray-800 transition-colors"
             onClick={() => setShowReviewModal(true)}
           >
             Write a review
@@ -186,57 +215,56 @@ export default function ProductDetailsClient({ product: initialProduct, randomPr
           {randomProducts.length > 0 ? (
             randomProducts.map((product) => (
               <Link
-            href={`/product/${product._id}`}
-            key={product._id}
-            className="rounded-lg flex flex-col cursor-pointer relative"
-          >
-            <div className="bg-gray-200 p-2 rounded-2xl w-full md:min-w-60 h-100 flex items-center justify-center">
-              <img
-                className={`${
-                  product.category === "shoes" ? "object-contain" : "object-cover"
-                } w-full h-full  transition-transform duration-300 ease-in-out  hover:scale-150`}
-                src={product.image}
-                alt={product.title}
-              />
-            </div>
+                href={`/product/${product._id}`}
+                key={product._id}
+                className="rounded-lg flex flex-col cursor-pointer relative"
+              >
+                <div className="bg-gray-200 p-2 rounded-2xl w-full md:min-w-60 h-100 flex items-center justify-center">
+                  <img
+                    className={`${
+                      product.category === "shoes" ? "object-contain" : "object-cover"
+                    } w-full h-full  transition-transform duration-300 ease-in-out  hover:scale-150`}
+                    src={product.image}
+                    alt={product.title}
+                  />
+                </div>
 
-            <div className="pt-4 flex-1 flex flex-col justify-between">
-                    <h2 className="text-lg font-bold text-gray-800 mb-2 line-clamp-2 group-hover:text-indigo-600 transition-colors">
-                      {product.title}
-                    </h2>
-                    <div className="flex items-center justify-between ">
-                      {product.rate ? (
-                  <div className="flex items-center gap-2">
-                    <div className="flex text-yellow-400 text-xl">
-                      {[...Array(Math.ceil(product.rate))].map((_, i) => {
-                        const fullStars = Math.floor(product.rate);
-                        const hasHalf = product.rate % 1 !== 0;
+                <div className="pt-4 flex-1 flex flex-col justify-between">
+                  <h2 className="text-lg font-bold text-gray-800 mb-2 line-clamp-2 group-hover:text-indigo-600 transition-colors">
+                    {product.title}
+                  </h2>
+                  <div className="flex items-center justify-between ">
+                    {product.rate ? (
+                      <div className="flex items-center gap-2">
+                        <div className="flex text-yellow-400 text-xl">
+                          {[...Array(Math.ceil(product.rate))].map((_, i) => {
+                            const fullStars = Math.floor(product.rate);
+                            const hasHalf = product.rate % 1 !== 0;
 
-                        if (i < fullStars) {
-                          return <FaStar key={i} />;
-                        } else if (i === fullStars && hasHalf) {
-                          return <FaStarHalfAlt key={i} />;
-                        }
-                        return null;
-                      })}
-                    </div>
-                    <p className="font-semibold">{product.rate}/5</p>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2 text-gray-500">
-                    <FaRegStar className="text-xl" />
-                    <p className="text-sm">No reviews yet</p>
-                  </div>
-                )}
-                <div className="flex items-center gap-2">
+                            if (i < fullStars) {
+                              return <FaStar key={i} />;
+                            } else if (i === fullStars && hasHalf) {
+                              return <FaStarHalfAlt key={i} />;
+                            }
+                            return null;
+                          })}
+                        </div>
+                        <p className="font-semibold">{product.rate}/5</p>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2 text-gray-500">
+                        <FaRegStar className="text-xl" />
+                        <p className="text-sm">No reviews yet</p>
+                      </div>
+                    )}
+                    <div className="flex items-center gap-2">
                       <Tag className="w-4 h-4 text-gray-400" />
                       <span className="text-sm text-gray-500 font-medium">
                         {product.category}
                       </span>
                     </div>
-                    </div>
+                  </div>
 
-                
                   <div className="absolute top-3 right-3">
                     {Number(product.inStock) === 0 ? (
                       <span className="flex items-center gap-1 bg-red-500 text-white px-3 py-1.5 rounded-full text-xs font-semibold shadow-lg">
@@ -256,8 +284,8 @@ export default function ProductDetailsClient({ product: initialProduct, randomPr
                       {product.price}
                     </span>
                   </div>
-            </div>
-          </Link>
+                </div>
+              </Link>
             ))
           ) : (
             <p className="text-center text-2xl font-bold py-20">Loading...</p>

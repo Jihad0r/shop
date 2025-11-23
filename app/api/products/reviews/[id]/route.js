@@ -22,7 +22,12 @@ export async function POST(req, { params }) {
       return NextResponse.json({ error: "cant rate products, login first" }, { status: 401 });
     }
 
-    if (userId === process.env.Admin) {
+    const currentUser = await User.findById(userId).select("-password");
+    if (!currentUser) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+    
+    if (currentUser.role !== "user") {
       return NextResponse.json({ error: "cant rate your product" }, { status: 401 });
     }
 

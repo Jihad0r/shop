@@ -1,4 +1,3 @@
-// /api/users/me/route.js (example)
 import { dbConnect } from "@/lib/config/db";
 import User from "@/lib/models/User";
 import { getUserFromRequest } from "@/utils/getUserFromToken";
@@ -9,21 +8,18 @@ export async function GET(req) {
     await dbConnect();
 
     const userId = await getUserFromRequest(req);
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     const user = await User.findById(userId).select("-password");
+
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    const isAdmin = user.role !== "user";
-
-    return NextResponse.json({
-      user,
-      isAdmin, // Send only a boolean, not the actual ADMIN ID
-    });
+    const validRoles = ['admin', 'editor']; 
+    if (!validRoles.includes(user.role)) {
+      return NextResponse.json({ error: "Invalid role" }, { status: 400 });
+    }
+    const users = await User.find({role:validRoles}).select("-password");
+    return NextResponse.json(users);
   } catch (err) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }

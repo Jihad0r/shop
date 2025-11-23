@@ -18,7 +18,6 @@ const geistMono = Geist_Mono({
 export default function RootLayout({ children }) {
   return (
       <>
-           <Toaster position="top-center" reverseOrder={false} />
            
               <Suspense fallback={<ProductDetailSkeleton/>}>
                 {children}
