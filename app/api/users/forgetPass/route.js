@@ -84,7 +84,7 @@ export async function POST(req) {
                 <a href="${resetLink}" class="button">Reset Password</a>
                 <p>Or copy and paste this link into your browser:</p>
                 <p style="word-break: break-all; color: #007bff;">${resetLink}</p>
-                <p class="warning">⚠️ This link expires in 15 minutes.</p>
+                <p class="warning">This link expires in 15 minutes.</p>
                 <p>If you didn't request this password reset, please ignore this email. Your password will remain unchanged.</p>
                 <div class="footer">
                   <p>This is an automated message, please do not reply.</p>
@@ -97,7 +97,7 @@ export async function POST(req) {
       
       console.log(`✅ Password reset email sent to ${email}`);
     } catch (emailError) {
-      console.error("❌ Failed to send email:", emailError);
+      console.error("Failed to send email:", emailError);
       // Still return success to user (don't reveal if email failed)
     }
 
@@ -106,7 +106,7 @@ export async function POST(req) {
     });
     
   } catch (error) {
-    console.error("❌ Password reset error:", error);
+    console.error("Password reset error:", error);
     
     
     return NextResponse.json({ error: "Something went wrong" }, { status: 500 });

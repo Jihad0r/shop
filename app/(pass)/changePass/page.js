@@ -12,6 +12,7 @@ function ResetPasswordForm() {
     password: "",
     confirmPassword: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -35,10 +36,17 @@ function ResetPasswordForm() {
       return;
     }
 
+    // Validate password length
+    if (formData.password.length < 6) {
+      toast.error("Password must be at least 6 characters");
+      return;
+    }
+
+    setIsLoading(true);
     const loadingToast = toast.loading("Resetting password...");
 
     try {
-      const res = await fetch("/api/auth/reset-password", {
+      const res = await fetch("/api/auth/resetPass", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -52,16 +60,53 @@ function ResetPasswordForm() {
 
       if (!res.ok) {
         toast.error(data.error || "Password reset failed");
+        setIsLoading(false);
         return;
       }
 
-      toast.success("Password reset successful! Please log in.");
-      router.push("/login");
+      toast.success("Password reset successful! Redirecting to login...");
+      
+      // Clear form
+      setFormData({
+        password: "",
+        confirmPassword: "",
+      });
+
+      // Redirect after short delay
+      setTimeout(() => {
+        router.push("/login");
+      }, 1500);
+      
     } catch (err) {
       toast.dismiss(loadingToast);
       toast.error(err.message || "Something went wrong");
+      setIsLoading(false);
     }
   };
+
+  // Show error if no token in URL
+  if (!token) {
+    return (
+      <div className="max-w-xl mx-auto mt-12 px-4">
+        <div className="text-center">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+            <h2 className="text-xl font-semibold text-red-800 mb-2">
+              Invalid Reset Link
+            </h2>
+            <p className="text-red-600 mb-4">
+              This password reset link is invalid or missing required information.
+            </p>
+            <button
+              onClick={() => router.push("/forgotPass")}
+              className="bg-red-600 text-white px-6 py-2 rounded-md hover:bg-red-700 transition-colors"
+            >
+              Request New Reset Link
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-xl mx-auto mt-12 px-4">
@@ -74,7 +119,10 @@ function ResetPasswordForm() {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+          <label 
+            htmlFor="password" 
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
             New Password <span className="text-red-500">*</span>
           </label>
           <input
@@ -85,12 +133,17 @@ function ResetPasswordForm() {
             value={formData.password}
             required
             minLength={6}
-            className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+            disabled={isLoading}
+            className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+            placeholder="Enter new password (min. 6 characters)"
           />
         </div>
 
         <div>
-          <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+          <label 
+            htmlFor="confirmPassword" 
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
             Confirm Password <span className="text-red-500">*</span>
           </label>
           <input
@@ -101,16 +154,30 @@ function ResetPasswordForm() {
             value={formData.confirmPassword}
             required
             minLength={6}
-            className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+            disabled={isLoading}
+            className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+            placeholder="Confirm new password"
           />
         </div>
 
         <button
           type="submit"
-          className="w-full bg-gray-900 text-white py-3 px-4 font-medium hover:bg-gray-800 transition-colors duration-200"
+          disabled={isLoading}
+          className="w-full bg-gray-900 text-white py-3 px-4 font-medium hover:bg-gray-800 transition-colors duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
-          Reset Password
+          {isLoading ? "Resetting..." : "Reset Password"}
         </button>
+
+        <div className="text-center">
+          <button
+            type="button"
+            onClick={() => router.push("/login")}
+            disabled={isLoading}
+            className="text-sm text-gray-600 hover:text-gray-900 underline disabled:text-gray-400"
+          >
+            Back to Login
+          </button>
+        </div>
       </form>
     </div>
   );
