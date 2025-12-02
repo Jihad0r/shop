@@ -19,12 +19,6 @@ const useAuthStore = create((set, get) => ({
       const res = await fetch("/api/users/me", { cache: "no-store" });
       const data = await res.json();
 
-      if (!res.ok) {
-        get().clearUser();
-        router.push("/");
-        return false;
-      }
-
       get().setUser(data.user);
       return true;
     } catch (err) {

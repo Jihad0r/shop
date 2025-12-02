@@ -8,7 +8,7 @@ import { useState } from 'react';
 export const Sidebar = () => {
     const [activeTab, setActiveTab] = useState('dashboard');
 return(
-    <div className="w-1/4 bg-slate-900 text-white h-screen fixed left-0 top-0 overflow-y-auto">
+    <div className="w-1/4 bg-slate-900 text-white h-screen fixed left-0  overflow-y-auto">
       <div className="p-6 border-b border-slate-800">
         <h1 className="text-2xl font-bold flex items-center gap-2">
           <ShoppingBag className="w-8 h-8" />
@@ -17,7 +17,7 @@ return(
       </div>
       <nav className="p-4">
         {[
-          { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+          { id:"", icon: LayoutDashboard, label: 'Dashboard' },
           { id: 'productes', icon: Package, label: 'Productes' },
           { id: 'orders', icon: ShoppingCart, label: 'Orders' },
           { id: 'customers', icon: Users, label: 'Customers' },

@@ -29,20 +29,20 @@ export default function CartPage() {
   }, []);
 
   const handleDeleteItem = async (id) => {
-    try {
-      setDeleteIcon(false);
-      const res = await fetch(`/api/carts/${id}`, { method: "DELETE" });
-      const result = await res.json();
-      if (!res.ok) throw new Error(result?.error || "Delete failed");
+  try {
+    setDeleteIcon(false);
+    const res = await fetch(`/api/carts/${id}`, { method: "PATCH" });
+    const result = await res.json();
+    if (!res.ok) throw new Error(result?.error || "Delete failed");
 
-      await fetchCart();
-       toast.success("Item removed from cart");
-    } catch (err) {
-       toast.error(err.message || "Item didn't remove from cart.");
-    } finally {
-      setDeleteIcon(true);
-    }
-  };
+    await fetchCart();
+    toast.success("Item removed from cart");
+  } catch (err) {
+    toast.error(err.message || "Item didn't remove from cart.");
+  } finally {
+    setDeleteIcon(true);
+  }
+};
 
   const applyPromo = () => {
     if (promoCode.trim().toUpperCase() === process.env.Discount) {

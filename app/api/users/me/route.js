@@ -1,4 +1,3 @@
-// /api/users/me/route.js (example)
 import { dbConnect } from "@/lib/config/db";
 import User from "@/lib/models/User";
 import { getUserFromRequest } from "@/utils/getUserFromToken";

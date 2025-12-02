@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import useAuthStore from "./authStore";
 import { X } from "lucide-react";
+import Link from "next/link";
 
 export default function Login({setShowLogin, showLogin}) {
   const router = useRouter();
@@ -45,6 +46,7 @@ export default function Login({setShowLogin, showLogin}) {
   const handleClose = () => {
     setShowLogin(!showLogin);
   };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault(); 
@@ -121,9 +123,9 @@ export default function Login({setShowLogin, showLogin}) {
             onChange={handleChange}
             value={formData.password}
             required
-            className="w-full p-2 border outline-none rounded"
+            className="w-full p-2 m-0 border outline-none rounded"
           />
-
+          <Link href={"/resetPass"}>Forget Password?</Link>
           <button
             type="submit"
             className="w-full bg-black text-white p-2 hover:bg-gray-800 cursor-pointer rounded"

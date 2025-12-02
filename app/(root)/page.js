@@ -2,7 +2,7 @@ import Image from "next/image";
 import modelBackground from "../../public/images/portrait-handsome-smiling-stylish-young-man.png";
 import ProductLoadingCard from "../component/ProductLoadingCard"
 
-import ForYou from "../component/getProductes";
+import ForYou from "../component/ForYou";
 import { Suspense } from "react";
 
 export default function Home() {

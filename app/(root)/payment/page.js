@@ -243,7 +243,7 @@ export default function CheckoutForm() {
             className="w-full px-3 py-3 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
           />
           
-          <label className="flex items-center mt-4 cursor-pointer">
+          <label className="flex items-center mt-4 w-fit cursor-pointer">
             <input
               type="checkbox"
               name="whatsapp"
@@ -251,7 +251,7 @@ export default function CheckoutForm() {
               onChange={handleInputChange}
               className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
             />
-            <span className="ml-2 text-sm text-gray-700">Get order updates on WhatsApp</span>
+            <span className="ml-2 text-sm  text-gray-700">Get order updates on WhatsApp</span>
           </label>
         </div>
         
@@ -346,7 +346,7 @@ export default function CheckoutForm() {
               </button>
             </div>
           </div>
-          <label className="flex items-center mb-3 cursor-pointer">
+          <label className="flex items-center mb-3 w-fit cursor-pointer">
             <input
               type="checkbox"
               name="saveInfo"
@@ -354,7 +354,7 @@ export default function CheckoutForm() {
               onChange={handleSaveInfoChange}
               className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
             />
-            <span className="ml-2 text-sm text-gray-700">Save this information for next time</span>
+            <span className="ml-2 text-sm text-gray-700 ">Save this information for next time</span>
           </label>
         </div>
 

@@ -112,6 +112,9 @@ export async function POST(req, { params }) {
 }
 
 export async function PATCH(req, { params }) {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  
   try {
     await dbConnect();
 
@@ -124,27 +127,24 @@ export async function PATCH(req, { params }) {
       const sessionId = (await cookies()).get("guest_session_id")?.value;
       
       if (!sessionId) {
+        await session.abortTransaction();
         return NextResponse.json({ error: "No guest session found" }, { status: 404 });
       }
       
-      cart = await Cart.findOne({ sessionId });
+      cart = await Cart.findOne({ sessionId }).session(session);
       
       if (!cart) {
+        await session.abortTransaction();
         return NextResponse.json({ error: "Cart not found" }, { status: 404 });
       }
     } else {
       // Authenticated user flow
-      cart = await Cart.findOne({ user: userId });
+      cart = await Cart.findOne({ user: userId }).session(session);
       
       if (!cart) {
+        await session.abortTransaction();
         return NextResponse.json({ error: "Cart not found" }, { status: 404 });
       }
-    }
-
-    // Check if product exists
-    const product = await Product.findById(productId);
-    if (!product) {
-      return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
 
     // Find product in cart
@@ -153,71 +153,36 @@ export async function PATCH(req, { params }) {
     );
     
     if (!itemInCart) {
+      await session.abortTransaction();
       return NextResponse.json({ error: "Product not in cart" }, { status: 404 });
     }
 
-    // Remove product from cart (NO stock restoration)
+    // Find and update product stock
+    const product = await Product.findById(productId).session(session);
+    if (!product) {
+      await session.abortTransaction();
+      return NextResponse.json({ error: "Product not found" }, { status: 404 });
+    }
+
+    // Restore stock
+    product.inStock += itemInCart.quantity;
+    await product.save({ session });
+
+    // Remove product from cart
     cart.items = cart.items.filter(
       (item) => item.product.toString() !== productId.toString()
     );
 
-    await cart.save();
+    await cart.save({ session });
+    await session.commitTransaction();
 
     return NextResponse.json({ message: "Product removed from cart", cart });
     
   } catch (err) {
+    await session.abortTransaction();
     console.error('Cart PATCH error:', err);
     return NextResponse.json({ error: err.message }, { status: 500 });
-  }
-}
-
-export async function DELETE(req, { params }) {
-  try {
-    await dbConnect();
-
-    const { id: productId } = await params;
-    const userId = await getUserFromRequest(req);
-    let cart;
-
-    if (!userId) {
-      // Guest user flow
-      const cookieStore = await cookies();
-      const sessionId = cookieStore.get("guest_session_id")?.value;
-      
-      if (!sessionId) {
-        return NextResponse.json({ error: "No guest session found" }, { status: 404 });
-      }
-      
-      cart = await Cart.findOne({ sessionId });
-      
-      if (!cart) {
-        return NextResponse.json({ error: "Cart not found" }, { status: 404 });
-      }
-    } else {
-      // Authenticated user flow
-      cart = await Cart.findOne({ user: userId });
-      
-      if (!cart) {
-        return NextResponse.json({ error: "Cart not found" }, { status: 404 });
-      }
-    }
-
-    const itemIndex = cart.items.findIndex(
-      (item) => item.product.toString() === productId
-    );
-    
-    if (itemIndex === -1) {
-      return NextResponse.json({ error: "Product not in cart" }, { status: 404 });
-    }
-
-    // Remove from cart (NO stock restoration)
-    cart.items.splice(itemIndex, 1);
-    await cart.save();
-
-    return NextResponse.json({ message: "Product removed from cart", cart });
-    
-  } catch (err) {
-    console.error("Delete cart item error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+  } finally {
+    session.endSession();
   }
 }

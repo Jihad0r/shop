@@ -3,6 +3,7 @@ import Cart from "@/lib/models/Cart";
 import { NextResponse } from "next/server";
 import { getUserFromRequest } from "@/utils/getUserFromToken";
 import User from "@/lib/models/User";
+import Product from "@/lib/models/Product";
 
 export async function GET(req) {
   try {
@@ -26,3 +27,4 @@ export async function GET(req) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
+
