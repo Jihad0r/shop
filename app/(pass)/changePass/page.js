@@ -76,7 +76,7 @@ function ResetPasswordForm() {
 
       // Redirect after short delay
       setTimeout(() => {
-        router.push("/login");
+        router.push("/");
       }, 1500);
       
     } catch (err) {
