@@ -100,7 +100,9 @@ export async function POST(req) {
       console.error("Failed to send email:", emailError);
       // Still return success to user (don't reveal if email failed)
     }
-
+    console.log("resetToken:",resetToken);
+    console.log("resetToken:",resetToken);
+    
     return NextResponse.json({
       message: "If that email exists, a reset link has been sent.",
     });

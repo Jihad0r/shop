@@ -24,7 +24,7 @@ function ResetPasswordForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate token exists
+    
     if (!token) {
       toast.error("Invalid or missing reset token");
       return;
@@ -46,7 +46,7 @@ function ResetPasswordForm() {
     const loadingToast = toast.loading("Resetting password...");
 
     try {
-      const res = await fetch("/api/auth/resetPass", {
+      const res = await fetch("/api/users/resetPass", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -54,6 +54,8 @@ function ResetPasswordForm() {
           password: formData.password,
         }),
       });
+
+      console.log(token)
 
       const data = await res.json();
       toast.dismiss(loadingToast);
