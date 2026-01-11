@@ -5,7 +5,7 @@ async function getProduct(id) {
    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "";
   try {
     const res = await fetch(`${baseUrl}/api/products/product/${id}`, {
-      cache: "no-store",
+      cache:"no-cache",
     });
     if (!res.ok) return null;
     return res.json();
@@ -30,13 +30,15 @@ async function getProducts() {
 
 export default async function ProductDetails({ params }) {
   // Defensive check
-  if (!params || !params.id) {
+   const { id } = await params;
+
+  if (!params || !id) {
     console.error('params or params.id is undefined:', params);
     notFound();
   }
 
-  const { id } = params;
-  
+ 
+
   const [product, allProducts] = await Promise.all([
     getProduct(id),
     getProducts(),

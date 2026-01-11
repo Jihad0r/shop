@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 import { getUserFromRequest } from "@/utils/getUserFromToken";
 import { cookies } from "next/headers";
 import mongoose from "mongoose";
+import User from "@/lib/models/User";
 
 export async function POST(req, { params }) {
   const session = await mongoose.startSession();
@@ -16,9 +17,22 @@ export async function POST(req, { params }) {
     const { id: productId } = await params;
     const { quantity } = await req.json();
     const qty = Math.max(1, quantity || 1);
+<<<<<<< HEAD
 
     // Find and lock the product document
     const product = await Product.findById(productId).session(session);
+=======
+    const userId = await getUserFromRequest(req);
+    const user = await User.findOne({ _id:userId });
+    
+    if (!user || user.role === "admin") {
+      return NextResponse.json({ error: "Login frist" }, { status: 403 });
+    }
+    // if (!user.isVerified) {
+    //   return NextResponse.json({ error: "Verify Your Emaill" }, { status: 404 });
+    // }
+    const product = await Product.findById(productId);
+>>>>>>> 7bb97d6 (fix auth and product bugs)
     if (!product) {
       await session.abortTransaction();
       return NextResponse.json({ error: "Product not found" }, { status: 404 });

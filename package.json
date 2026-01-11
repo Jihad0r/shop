@@ -9,6 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+<<<<<<< HEAD
+=======
+    "@reduxjs/toolkit": "^2.11.2",
+>>>>>>> 7bb97d6 (fix auth and product bugs)
     "bcryptjs": "^3.0.2",
     "cloudinary": "^2.7.0",
     "crypto": "^1.0.1",

@@ -3,14 +3,30 @@
 import { useEffect, useState } from "react";
 import { ShoppingCart, Trash2, Tag, Package, TrendingUp } from "lucide-react";
 import Link from "next/link";
+<<<<<<< HEAD
 import toast from "react-hot-toast";
+=======
+import useAuthStore from "@/app/component/authStore";
+import { useRouter } from "next/navigation";
+>>>>>>> 7bb97d6 (fix auth and product bugs)
 
 export default function CartPage() {
+  
+    const router = useRouter();
   const [deleteIcon, setDeleteIcon] = useState(true);
   const [carts, setCarts] = useState([]);
   const [promoCode, setPromoCode] = useState("");
   const [discountRate, setDiscountRate] = useState(0);
+<<<<<<< HEAD
   
+=======
+  const [toastMessage, setToastMessage] = useState("");
+  const {user,checkAuth} = useAuthStore();
+  const showToast = (message, type = "success") => {
+    setToastMessage({ message, type });
+    setTimeout(() => setToastMessage(""), 3000);
+  };
+>>>>>>> 7bb97d6 (fix auth and product bugs)
 
   const fetchCart = async () => {
     try {
@@ -25,15 +41,26 @@ export default function CartPage() {
   };
 
   useEffect(() => {
-    fetchCart();
-  }, []);
+      if (user) {
+        fetchCart()
+      }
+    }, []);
 
+<<<<<<< HEAD
   const handleDeleteItem = async (id) => {
   try {
     setDeleteIcon(false);
     const res = await fetch(`/api/carts/${id}`, { method: "PATCH" });
     const result = await res.json();
     if (!res.ok) throw new Error(result?.error || "Delete failed");
+=======
+   const handleDeleteItem = async (id) => {
+    try {
+      setDeleteIcon(false);
+      const res = await fetch(`/api/carts/${id}`, { method: "DELETE" });
+      const result = await res.json();
+      if (!res.ok) throw new Error(result?.error || "Delete failed");
+>>>>>>> 7bb97d6 (fix auth and product bugs)
 
     await fetchCart();
     toast.success("Item removed from cart");
@@ -55,7 +82,7 @@ export default function CartPage() {
     }
   };
 
-  const totalPrice = carts.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const totalPrice = carts?.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const discountedTotal = totalPrice - totalPrice * discountRate;
 
   return (
@@ -145,7 +172,7 @@ export default function CartPage() {
               <div className="space-y-4 mb-6">
                 <div className="flex justify-between text-gray-600">
                   <span>Subtotal</span>
-                  <span className="font-semibold text-gray-800">${totalPrice.toFixed(2)}</span>
+                  <span className="font-semibold text-gray-800">${totalPrice?.toFixed(2)}</span>
                 </div>
                 
                 {discountRate > 0 && (

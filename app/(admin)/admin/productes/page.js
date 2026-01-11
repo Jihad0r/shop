@@ -1,8 +1,13 @@
 "use client";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
+<<<<<<< HEAD:app/(admin)/admin/productes/page.js
 import ProductStore from "../../../component/ProductStore";
 import ProductFormModal from "../../../component/ProductFormModal";
+=======
+import ProductStore from "../../component/store/ProductStore";
+import ProductFormModal from "../../component/ProductFormModal";
+>>>>>>> 7bb97d6 (fix auth and product bugs):app/(root)/admin/page.js
 import {
   Plus,
   Edit2,

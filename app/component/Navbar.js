@@ -5,20 +5,37 @@ import useAuthStore from "./authStore";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Search, Menu, X, ShoppingBag, User, LogOut, Shield,ShoppingBasket ,CircleUserRound} from "lucide-react";
-import ProductStore from "./ProductStore";
-
+import ProductStore from "./store/ProductStore";
+import useCartStore from "./store/CartStore";
 export default function Navbar({setShowLogin}) {
   const router = useRouter();
-  const { user, checkAuth, clearUser, isAdmin } = useAuthStore();
+  const {user, checkAuth, clearUser, isAdmin } = useAuthStore();
   const [showSearch, setShowSearch] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+<<<<<<< HEAD
   const [carts, setCarts] = useState([]);
   const { searchQuery, setSearchQuery } = ProductStore();
    
+=======
+  // const [carts, setCarts] = useState([]);
+  const { searchQuery, setSearchQuery } = ProductStore();
+   
+  
+  const fetchCart = useCartStore((state) => state.fetchCart);
+  const {carts,clearCart} = useCartStore();
+    
+  useEffect(() => {
+    if (user) {
+      fetchCart();
+    }
+  }, [user]);
+
+>>>>>>> 7bb97d6 (fix auth and product bugs)
   useEffect(() => {
     if (!user) {
       checkAuth(router);
+      clearCart()
     }
   }, [user, checkAuth, router]);
 
@@ -96,10 +113,14 @@ export default function Navbar({setShowLogin}) {
                 </span>
               </Link>
               {user && (
-                <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-full border border-indigo-100">
+                <div className={`hidden lg:flex items-center gap-2 px-3 py-1.5 ${user.isVerified?"bg-gradient-to-r from-indigo-50 to-purple-50 border-indigo-100":"bg-red-400  border-red-400 text-white"} rounded-full border`}>
                   <User className="w-4 h-4" />
-                  <span className="text-sm font-medium text-gray-700">
+                  <span className="text-sm font-medium">
                     {user.username}
+                  </span>
+                  
+                  <span className="text-sm font-medium">
+                    {!user.isVerified && "Not Verified"}
                   </span>
                 </div>
               )}
@@ -145,7 +166,11 @@ export default function Navbar({setShowLogin}) {
                   href="/cart"
                   className="group relative font-medium hover:text-indigo-600 transition-colors"
                 >
+<<<<<<< HEAD
                   {carts.length > 0 &&<div className="rounded-full text-white font-bold w-5 h-5 absolute -right-1 -top-2  bg-red-500"><span className="px-1.5 ">{carts.length}</span></div>}
+=======
+                  {carts?.items?.length > 0 &&<div className="rounded-full text-white font-bold w-5 h-5 absolute -right-1 -top-2  bg-red-500"><span className="px-1.5 ">{carts?.items?.length}</span></div>}
+>>>>>>> 7bb97d6 (fix auth and product bugs)
                    <button><ShoppingBasket /></button>
                    
                 </Link>
@@ -224,17 +249,15 @@ export default function Navbar({setShowLogin}) {
               {/* User Info */}
               <div className="flex items-center justify-between mb-5">
               {user ?(
-                <div className="p-4 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl border border-indigo-100">
+                <div className={`p-4 ${user.isVerified?"bg-gradient-to-r from-indigo-50 to-purple-50 border-indigo-100":"bg-red-400  border-red-400 text-white"} rounded-2xl border`}>
                   <div className="flex items-center">
                       <div className="p-2 rounded-full transform hover:-translate-y-0.5 transition-all">
                       <User className="w-6 h-6" />
                     </div>
                     <div>
-                      <p className="font-semibold text-gray-800">{user.username}</p>
-                      <p className="text-sm text-gray-600">
-                        {isAdmin ? "Admin" : "Customer"}
-                      </p>
-
+                      <p className="text-sm font-medium">{user.username}</p>
+                      
+                      <p className="text-sm font-medium">{!user.isVerified && "Not Verified"}</p>
                     </div>
                     </div>
                 </div>
@@ -246,15 +269,15 @@ export default function Navbar({setShowLogin}) {
                 </div>
               )}
               <div className="flex items-center justify-between">
-                {user && !isAdmin && (
-                <Link
+                 <Link
                   href="/cart"
                   onClick={() => setShowMobileMenu(false) }
                   className="group relative font-medium hover:text-indigo-600 transition-colors"
                 >
-                   <ShoppingBasket />
+                  {carts?.items?.length > 0 &&<div className="rounded-full text-white font-bold w-5 h-5 absolute -right-1 -top-2  bg-red-500"><span className="px-1.5 ">{carts?.items?.length}</span></div>}
+                   <button><ShoppingBasket /></button>
+                   
                 </Link>
-              )} 
                   {user?<button
                     onClick={handleLogout}
                     className="p-2 rounded-full transform hover:-translate-y-0.5 transition-all cursor-pointer"><LogOut/></button>: <button
@@ -279,6 +302,7 @@ export default function Navbar({setShowLogin}) {
                     </Link>
                   );
                 })}
+<<<<<<< HEAD
 
                   <Link
                     href="/cart"
@@ -290,6 +314,8 @@ export default function Navbar({setShowLogin}) {
                     </span>
                   </Link>
 
+=======
+>>>>>>> 7bb97d6 (fix auth and product bugs)
                 {isAdmin && (
                   <Link
                     href="/admin"

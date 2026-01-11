@@ -11,12 +11,14 @@ export async function POST(req) {
     await dbConnect();
 
     const data = await req.json();
-    const { username, email, password } = data;
+    const { username, email, password,confirm_password } = data;
 
     if (!username || !email || !password) {
       return NextResponse.json({ error: "All fields are required" }, { status: 400 });
     }
-
+    if (username.length >= 11) {
+      return NextResponse.json({ error: "Username must be less or equal 10 characters" }, { status: 400 });
+    }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return NextResponse.json({ field: "email", error: "Invalid email format" }, { status: 400 });
@@ -30,6 +32,11 @@ export async function POST(req) {
     if (existingUser) {
       return NextResponse.json({
         error: existingUser.email === email ? "Email already in use" : "Username already taken",
+      }, { status: 400 });
+    }
+    if(password !== confirm_password){
+       return NextResponse.json({
+        error:"password not match",
       }, { status: 400 });
     }
 

@@ -26,35 +26,6 @@ export default function NotFound() {
             <FaHome />
             Go Home
           </Link>
-          
-          <Link
-            href="/search"
-            className="flex items-center justify-center gap-2 border-2 border-gray-800 text-gray-800 px-6 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
-          >
-            <FaSearch />
-            Search Products
-          </Link>
-        </div>
-
-        <div className="mt-12">
-          <p className="text-sm text-gray-500">Popular Categories:</p>
-          <div className="flex flex-wrap gap-2 justify-center mt-3">
-            <Link href="/category/electronics" className="text-sm text-blue-600 hover:underline">
-              Electronics
-            </Link>
-            <span className="text-gray-300">•</span>
-            <Link href="/category/clothing" className="text-sm text-blue-600 hover:underline">
-              Clothing
-            </Link>
-            <span className="text-gray-300">•</span>
-            <Link href="/category/shoes" className="text-sm text-blue-600 hover:underline">
-              Shoes
-            </Link>
-            <span className="text-gray-300">•</span>
-            <Link href="/category/accessories" className="text-sm text-blue-600 hover:underline">
-              Accessories
-            </Link>
-          </div>
         </div>
       </div>
     </div>

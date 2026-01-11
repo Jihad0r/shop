@@ -3,11 +3,14 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import ReviewModal from "@/app/component/ReviewModal";
 import { FaRegStar, FaStar, FaStarHalfAlt } from "react-icons/fa";
-import Link from "next/link";
-
-import { DollarSign, Tag, AlertCircle, CheckCircle } from "lucide-react";
+import ProductCard from "./getProductes";
 
 export default function ProductDetailsClient({ product: initialProduct, randomProducts }) {
+<<<<<<< HEAD
+=======
+  const router = useRouter();
+  console.log(initialProduct);
+>>>>>>> 7bb97d6 (fix auth and product bugs)
   const [product, setProduct] = useState(initialProduct);
   const [quantity, setQuantity] = useState(1);
   const [availableQuantity, setAvailableQuantity] = useState(initialProduct.inStock);
@@ -113,11 +116,6 @@ export default function ProductDetailsClient({ product: initialProduct, randomPr
 
           <div className="flex items-center gap-4">
             <span className="text-2xl font-bold">${product.price}</span>
-            {product.oldPrice && (
-              <span className="text-gray-500 line-through">
-                ${product.oldPrice}
-              </span>
-            )}
             {product.discount && (
               <span className="bg-red-100 text-red-600 px-2 py-1 rounded-lg text-sm">
                 -{product.discount}%
@@ -212,6 +210,7 @@ export default function ProductDetailsClient({ product: initialProduct, randomPr
           You Might Also Like
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+<<<<<<< HEAD
           {randomProducts.length > 0 ? (
             randomProducts.map((product) => (
                <Link
@@ -303,6 +302,11 @@ export default function ProductDetailsClient({ product: initialProduct, randomPr
           ) : (
             <p className="text-center text-2xl font-bold py-20">Loading...</p>
           )}
+=======
+          {randomProducts.map((product) => (
+             <ProductCard key={product._id} product={product} />
+            ))}
+>>>>>>> 7bb97d6 (fix auth and product bugs)
         </div>
       </div>
 

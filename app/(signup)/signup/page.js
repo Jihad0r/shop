@@ -1,23 +1,35 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import useAuthStore from "@/app/component/authStore";
+import { Eye,EyeOff} from "lucide-react";
+
 
 export default function CreateAccount() {
   const router = useRouter();
     const { setUser } = useAuthStore();
-
+    const [showPass,setShowPass] = useState({
+    password: false,
+    confirm_password: false,
+  });
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: "",
+    confirm_password: "",
   });
 
   const handleChange = (e) => {
     setFormData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
+    }));
+  };
+  const togglePassword  = (e) => {
+    setShowPass((prev) => ({
+      ...prev,
+      [e]:!prev[e],
     }));
   };
 
@@ -42,7 +54,7 @@ export default function CreateAccount() {
     }
 
     toast.success("Signup successful");
-    setUser(data.user)
+    setUser(data)
     router.push("/");
   } catch (err) {
     toast.dismiss(loadingToast);
@@ -93,22 +105,39 @@ export default function CreateAccount() {
           />
         </div>
 
-        <div>
+        <div className="relative">
           <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
             Your Password <span className="text-red-500">*</span>
           </label>
           <input
             id="password"
             name="password"
-            type="password"
+            type={showPass.password?"text":"password"}
             onChange={handleChange}
             value={formData.password}
             required
             minLength={6}
             className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
-          />
+         />
+           <button type="button" className="absolute right-5 top-1/2">{showPass.password?<Eye onClick={()=>togglePassword("password")} />: <EyeOff onClick={()=>togglePassword("password")}/>}</button>
         </div>
-
+        <div className="relative">
+          <label htmlFor="confirm_password" className="block text-sm font-medium text-gray-700 mb-2">
+            Confirm Password <span className="text-red-500">*</span>
+          </label>
+          <input
+            id="confirm_password"
+            name="confirm_password"
+            type={showPass.confirm_password?"text":"password"}
+            onChange={handleChange}
+            value={formData.confirm_password}
+            required
+            minLength={6}
+            className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+          />
+              <button  type="button" className="absolute right-5 top-1/2">{showPass.confirm_password?<Eye onClick={()=>togglePassword("confirm_password")} />: <EyeOff onClick={()=>togglePassword("confirm_password")}/>}</button>
+       
+        </div>
         <button
           type="submit"
           className="w-full bg-gray-900 text-white py-3 px-4 font-medium hover:bg-gray-800 transition-colors duration-200"

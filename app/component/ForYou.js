@@ -4,14 +4,23 @@ async function getProducts() {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "";
   try {
     const res = await fetch(`${baseUrl}/api/products/product`, {
+<<<<<<< HEAD
       cache: 'no-store', 
+=======
+      cache:"no-cache", 
+>>>>>>> 7bb97d6 (fix auth and product bugs)
     })
     
     if (!res.ok) {
       throw new Error("Failed to fetch products");
     }
     
+<<<<<<< HEAD
     return await res.json();
+=======
+    const data = await res.json(); 
+    return data;
+>>>>>>> 7bb97d6 (fix auth and product bugs)
   } catch (error) {
     console.error("Error fetching products:", error);
     return [];
@@ -38,6 +47,11 @@ export default async function ForYou() {
     .sort(() => random() - 0.5)
     .slice(0, 8);
 
+<<<<<<< HEAD
+=======
+    console.log(randomProducts);
+    
+>>>>>>> 7bb97d6 (fix auth and product bugs)
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       {randomProducts.map((product) => (

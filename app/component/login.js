@@ -3,12 +3,16 @@ import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import useAuthStore from "./authStore";
+<<<<<<< HEAD
 import { X } from "lucide-react";
+=======
+import { X }  from "lucide-react";
+>>>>>>> 7bb97d6 (fix auth and product bugs)
 import Link from "next/link";
 
 export default function Login({setShowLogin, showLogin}) {
   const router = useRouter();
-  const { user, setUser } = useAuthStore();
+  const {user , setUser } = useAuthStore();
   const [isAnimating, setIsAnimating] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
 
@@ -22,7 +26,6 @@ export default function Login({setShowLogin, showLogin}) {
       router.push("/");
     }
   }, [user, router]);
-
   useEffect(() => {
     if (showLogin) {
       setShouldRender(true);
@@ -47,7 +50,11 @@ export default function Login({setShowLogin, showLogin}) {
     setShowLogin(!showLogin);
   };
 
+<<<<<<< HEAD
 
+=======
+  
+>>>>>>> 7bb97d6 (fix auth and product bugs)
   const handleSubmit = async (e) => {
     e.preventDefault(); 
     
@@ -56,7 +63,7 @@ export default function Login({setShowLogin, showLogin}) {
     form.append("password", formData.password);
     const loadingToast = toast.loading("Logging in...");
 
-    try {
+  try {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         body: form,
@@ -71,15 +78,15 @@ export default function Login({setShowLogin, showLogin}) {
       }
 
       toast.success("Login successful");
-      setUser(data.user);
+      setUser(data); 
       handleClose();
-      router.push("/");
+      // router.push("/");
     } catch (err) {
       toast.dismiss(loadingToast);
       toast.error(err.message || "Something went wrong");
     }
   };
-
+  
   const handleSignupClick = () => {
     handleClose();
     router.push("/signup");

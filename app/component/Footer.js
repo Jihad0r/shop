@@ -6,6 +6,7 @@ import meeza from "../../public/images/meeza.png";
 import mastercard from "../../public/images/mastercard.png";
 import Image from "next/image";
 
+    
 export default function Footer() {
   return (
     <footer className="bg-gradient-to-b from-gray-50 to-gray-100 text-gray-700">

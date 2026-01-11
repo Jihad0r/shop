@@ -2,10 +2,10 @@ import { create } from "zustand";
 
 const ProductStore = create((set, get) => ({
   products: [],
+  category:[],
   searchQuery: "",
-
-  // Products setters
   setProducts: (products) => set({ products }),
+  setCategory:(category) => set({ category }),
   addProduct: (product) => set({ products: [...get().products, product] }),
   updateProduct: (updated) =>
     set({
@@ -16,10 +16,8 @@ const ProductStore = create((set, get) => ({
   deleteProduct: (id) =>
     set({ products: get().products.filter((p) => p._id !== id) }),
 
-  // Search
   setSearchQuery: (query) => set({ searchQuery: query.toLowerCase().trim() }),
 
-  // Filtered products
   filteredProducts: () => {
     const { products, searchQuery } = get();
     return products.filter(
@@ -31,4 +29,3 @@ const ProductStore = create((set, get) => ({
 }));
 
 export default ProductStore;
-
