@@ -3,12 +3,8 @@
 import { useEffect, useState } from "react";
 import { ShoppingCart, Trash2, Tag, Package, TrendingUp } from "lucide-react";
 import Link from "next/link";
-<<<<<<< HEAD
-import toast from "react-hot-toast";
-=======
 import useAuthStore from "@/app/component/authStore";
 import { useRouter } from "next/navigation";
->>>>>>> 7bb97d6 (fix auth and product bugs)
 
 export default function CartPage() {
   
@@ -17,26 +13,22 @@ export default function CartPage() {
   const [carts, setCarts] = useState([]);
   const [promoCode, setPromoCode] = useState("");
   const [discountRate, setDiscountRate] = useState(0);
-<<<<<<< HEAD
-  
-=======
   const [toastMessage, setToastMessage] = useState("");
   const {user,checkAuth} = useAuthStore();
   const showToast = (message, type = "success") => {
     setToastMessage({ message, type });
     setTimeout(() => setToastMessage(""), 3000);
   };
->>>>>>> 7bb97d6 (fix auth and product bugs)
 
   const fetchCart = async () => {
     try {
-      const res = await fetch("/api/carts/cart");
+      const res = await fetch("/api/carts/");
       if (!res.ok) throw new Error("Failed to fetch cart");
 
       const data = await res.json();
       setCarts(data.items || []);
     } catch (err) {
-       toast.error(err.message || "Error fetching cart.");
+      showToast(err.message, "error");
     }
   };
 
@@ -46,39 +38,29 @@ export default function CartPage() {
       }
     }, []);
 
-<<<<<<< HEAD
-  const handleDeleteItem = async (id) => {
-  try {
-    setDeleteIcon(false);
-    const res = await fetch(`/api/carts/${id}`, { method: "PATCH" });
-    const result = await res.json();
-    if (!res.ok) throw new Error(result?.error || "Delete failed");
-=======
    const handleDeleteItem = async (id) => {
     try {
       setDeleteIcon(false);
       const res = await fetch(`/api/carts/${id}`, { method: "DELETE" });
       const result = await res.json();
       if (!res.ok) throw new Error(result?.error || "Delete failed");
->>>>>>> 7bb97d6 (fix auth and product bugs)
 
-    await fetchCart();
-    toast.success("Item removed from cart");
-  } catch (err) {
-    toast.error(err.message || "Item didn't remove from cart.");
-  } finally {
-    setDeleteIcon(true);
-  }
-};
+      await fetchCart();
+      showToast("Item removed from cart");
+    } catch (err) {
+      showToast(err.message, "error");
+    } finally {
+      setDeleteIcon(true);
+    }
+  };
 
   const applyPromo = () => {
-    if (promoCode.trim().toUpperCase() === process.env.Discount) {
+    if (promoCode.trim().toUpperCase() === "SAVE30") {
       setDiscountRate(0.3);
-      
-      toast.success("Promo code applied! 30% off");
+      showToast("Promo code applied! 30% off");
     } else {
       setDiscountRate(0);
-      toast.error("Invalid promo code");
+      showToast("Invalid promo code", "error");
     }
   };
 
@@ -87,6 +69,21 @@ export default function CartPage() {
 
   return (
     <div className="min-h-screen ">
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="fixed top-4 right-4 z-50 animate-fade-in">
+          <div
+            className={` rounded-lg shadow-lg ${
+              toastMessage.type === "error"
+                ? "bg-red-500 text-white"
+                : "bg-green-500 text-white"
+            }`}
+          >
+            {toastMessage.message}
+          </div>
+        </div>
+      )}
+
       <div className="w-full p-6 lg:p-8 bg-gray-50">
         {/* Header */}
         <div className="mb-8">
@@ -153,7 +150,7 @@ export default function CartPage() {
                     </div>
                   ))
                 ) : (
-                  <div key={""} className="text-center py-16">
+                  <div className="text-center py-16">
                     <ShoppingCart className="w-24 h-24 mx-auto text-gray-300 mb-4" />
                     <p className="text-2xl font-semibold text-gray-400">Your cart is empty</p>
                     <p className="text-gray-400 mt-2">Add items to get started</p>
@@ -224,10 +221,9 @@ export default function CartPage() {
                 </div>
                 <p className="text-sm text-gray-500 text-right">Estimated delivery: 1-3 days</p>
               </div>
-              {carts.length > 0 &&
               <Link href={"/payment"}><button className="w-full bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors font-medium py-4 rounded-2xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
                 Proceed to Checkout
-              </button></Link>}
+              </button></Link>
               
 
               {/* Security Badge */}

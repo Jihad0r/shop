@@ -16,8 +16,8 @@ export async function PATCH(req, { params }) {
 
     const user = await User.findById(userId).select("-password");
 
-    if (user.role === "user") {
-     return NextResponse.json({ error: "Access denied. Admin only." }, { status: 403 });
+    if (!user || String(user?._id) !== process.env.Admin ) {
+      return NextResponse.json({ error: "Access denied. Admin only." }, { status: 403 });
     }
     let product = await Product.findById(params.id);
     if (!product) {
@@ -93,7 +93,7 @@ export async function DELETE(req, { params }) {
 
     const user = await User.findById(userId).select("-password");
 
-    if (user.role === "user") {
+    if (!user || String(user?._id) !== process.env.Admin) {
       return NextResponse.json({ error: "Access denied. Admin only." }, { status: 403 });
     }
 

@@ -1,3 +1,4 @@
+// /api/users/me/route.js (example)
 import { dbConnect } from "@/lib/config/db";
 import User from "@/lib/models/User";
 import { getUserFromRequest } from "@/utils/getUserFromToken";
@@ -17,7 +18,7 @@ export async function GET(req) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    const isAdmin = user.role !== "user";
+    const isAdmin = user._id.toString() === process.env.Admin?.toString();
 
     return NextResponse.json({
       user,

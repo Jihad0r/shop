@@ -1,13 +1,9 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-<<<<<<< HEAD:app/(admin)/admin/productes/page.js
-import ProductStore from "../../../component/ProductStore";
-import ProductFormModal from "../../../component/ProductFormModal";
-=======
 import ProductStore from "../../component/store/ProductStore";
 import ProductFormModal from "../../component/ProductFormModal";
->>>>>>> 7bb97d6 (fix auth and product bugs):app/(root)/admin/page.js
 import {
   Plus,
   Edit2,
@@ -18,6 +14,7 @@ import {
   AlertCircle,
   CheckCircle,
 } from "lucide-react";
+import useAuthStore from "@/app/component/authStore";
 
 export default function AdminPage() {
   const [showFormModal, setShowFormModal] = useState(false);
@@ -25,7 +22,26 @@ export default function AdminPage() {
   const [deleteLoading, setDeleteLoading] = useState(null);
   const { filteredProducts, setProducts, addProduct, updateProduct, deleteProduct } =
     ProductStore();
+  const { isAdmin, loading } = useAuthStore(); // make sure your store exposes "loading" or something similar
+  const router = useRouter();
 
+  // 🔒 Redirect non-admins to home
+  useEffect(() => {
+    if (!loading && !isAdmin) {
+      router.push("/"); // redirect to home
+    }
+  }, [isAdmin, loading, router]);
+
+  // 🕑 Show loading message while checking
+  if (loading || !isAdmin) {
+    return (
+      <div className="flex items-center justify-center h-screen text-lg text-gray-600">
+        Checking permissions...
+      </div>
+    );
+  }
+
+  // Fetch products
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -102,7 +118,7 @@ export default function AdminPage() {
   const products = filteredProducts();
 
   return (
-    <>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-6">
       {!showFormModal ? (
         <div className="max-w-7xl mx-auto">
           {/* Header */}
@@ -178,7 +194,7 @@ export default function AdminPage() {
               <p className="text-gray-400">Get started by adding your first product</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1  md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {products.map((product, index) => (
                 <div
                   key={product._id}
@@ -262,6 +278,6 @@ export default function AdminPage() {
           />
         )
       )}
-    </>
+    </div>
   );
 }

@@ -27,8 +27,7 @@ export async function POST(req) {
     }
 
     const user = await User.findById(userId).select("-password");
-   
-    if (user.role === "user") {
+    if (!user || String(user._id) !== process.env.Admin) {
       return NextResponse.json({ error: "Access denied. Admin only." }, { status: 403 });
     }
 
@@ -96,7 +95,7 @@ export async function DELETE(req) {
     }
 
     const user = await User.findById(userId);
-    if (user.role === "user") {
+    if (!user || user._id.toString() !== process.env.ADMIN?.toString()) {
       return NextResponse.json({ error: "Access denied. Admin only." }, { status: 403 });
     }
 

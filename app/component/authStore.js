@@ -27,13 +27,10 @@ const useAuthStore = create((set, get) => ({
       
       const data = await res.json();
 
-<<<<<<< HEAD
-=======
       if (!data.user) {
         throw new Error("No user data");
       }
 
->>>>>>> 7bb97d6 (fix auth and product bugs)
       get().setUser(data.user);
       return true;
     } catch (err) {

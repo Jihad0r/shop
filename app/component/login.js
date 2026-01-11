@@ -3,11 +3,7 @@ import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import useAuthStore from "./authStore";
-<<<<<<< HEAD
-import { X } from "lucide-react";
-=======
 import { X }  from "lucide-react";
->>>>>>> 7bb97d6 (fix auth and product bugs)
 import Link from "next/link";
 
 export default function Login({setShowLogin, showLogin}) {
@@ -50,11 +46,7 @@ export default function Login({setShowLogin, showLogin}) {
     setShowLogin(!showLogin);
   };
 
-<<<<<<< HEAD
-
-=======
   
->>>>>>> 7bb97d6 (fix auth and product bugs)
   const handleSubmit = async (e) => {
     e.preventDefault(); 
     

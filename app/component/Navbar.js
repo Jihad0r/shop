@@ -13,11 +13,6 @@ export default function Navbar({setShowLogin}) {
   const [showSearch, setShowSearch] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-<<<<<<< HEAD
-  const [carts, setCarts] = useState([]);
-  const { searchQuery, setSearchQuery } = ProductStore();
-   
-=======
   // const [carts, setCarts] = useState([]);
   const { searchQuery, setSearchQuery } = ProductStore();
    
@@ -31,7 +26,6 @@ export default function Navbar({setShowLogin}) {
     }
   }, [user]);
 
->>>>>>> 7bb97d6 (fix auth and product bugs)
   useEffect(() => {
     if (!user) {
       checkAuth(router);
@@ -39,21 +33,6 @@ export default function Navbar({setShowLogin}) {
     }
   }, [user, checkAuth, router]);
 
-   const fetchCart = async () => {
-      try {
-        const res = await fetch("/api/carts/cart");
-        if (!res.ok) throw new Error("Failed to fetch cart");
-  
-        const data = await res.json();
-        setCarts(data.items || []);
-      } catch (err) {
-         toast.error(err.message);
-      }
-    };
-  
-    useEffect(() => {
-      fetchCart();
-    }, []);
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 10);
@@ -166,11 +145,7 @@ export default function Navbar({setShowLogin}) {
                   href="/cart"
                   className="group relative font-medium hover:text-indigo-600 transition-colors"
                 >
-<<<<<<< HEAD
-                  {carts.length > 0 &&<div className="rounded-full text-white font-bold w-5 h-5 absolute -right-1 -top-2  bg-red-500"><span className="px-1.5 ">{carts.length}</span></div>}
-=======
                   {carts?.items?.length > 0 &&<div className="rounded-full text-white font-bold w-5 h-5 absolute -right-1 -top-2  bg-red-500"><span className="px-1.5 ">{carts?.items?.length}</span></div>}
->>>>>>> 7bb97d6 (fix auth and product bugs)
                    <button><ShoppingBasket /></button>
                    
                 </Link>
@@ -302,20 +277,6 @@ export default function Navbar({setShowLogin}) {
                     </Link>
                   );
                 })}
-<<<<<<< HEAD
-
-                  <Link
-                    href="/cart"
-                    onClick={() => setShowMobileMenu(false)}
-                    className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 rounded-xl transition-all group"
-                  >
-                    <span className="font-medium group-hover:text-indigo-600">
-                      Cart
-                    </span>
-                  </Link>
-
-=======
->>>>>>> 7bb97d6 (fix auth and product bugs)
                 {isAdmin && (
                   <Link
                     href="/admin"
