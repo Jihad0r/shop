@@ -56,6 +56,7 @@ export async function POST(req) {
     });
 
     const verifyUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/verify-email?token=${verificationToken}`;
+
     const htmlMessage = `
       <div style="font-family: Arial, sans-serif;">
         <h2>Verify your email</h2>

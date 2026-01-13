@@ -9,7 +9,9 @@ export async function GET(req) {
 
     const { searchParams } = new URL(req.url);
     const token = searchParams.get("token");
-
+    if (user.isVerified) {
+          return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/`);
+    }
     if (!token) {
       return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/verify-failed?reason=invalid`);
     }
@@ -25,6 +27,7 @@ export async function GET(req) {
       // Token invalid or expired
       return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/verify-failed?reason=expired`);
     }
+    
 
     // ✅ Verify user
     user.isVerified = true;
