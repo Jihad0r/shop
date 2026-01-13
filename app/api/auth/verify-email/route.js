@@ -31,7 +31,8 @@ export async function GET(req) {
         `${process.env.NEXT_PUBLIC_BASE_URL}/verify-failed?reason=invalid`
       );
     }
-
+    console.log("isVerified: ",isVerified);
+    
     if (user.isVerified) {
       return NextResponse.redirect(
         `${process.env.NEXT_PUBLIC_BASE_URL}/`

@@ -218,7 +218,6 @@ export default function Navbar({setShowLogin}) {
             className="fixed inset-0 bg-black/50 z-40 lg:hidden animate-fade-in"
             onClick={() => setShowMobileMenu(false)}
           ></div>
-          <a href={`${newUser.isVerified?"/" : verifyUrl}`}></a>
           <div className="fixed top-16 right-0 bottom-0 w-80 max-w-[85vw] bg-white z-50 shadow-2xl lg:hidden overflow-y-auto animate-slide-in">
             <div className="p-6">
               {/* User Info */}
