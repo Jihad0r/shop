@@ -9,32 +9,54 @@ export async function GET(req) {
 
     const { searchParams } = new URL(req.url);
     const token = searchParams.get("token");
+
     if (!token) {
-      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/verify-failed?reason=invalid`);
+      return NextResponse.redirect(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/verify-failed?reason=invalid`
+      );
     }
 
-    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+    const hashedToken = crypto
+      .createHash("sha256")
+      .update(token)
+      .digest("hex");
 
+    // 🔍 ابحث عن المستخدم بالتوكن فقط
     const user = await User.findOne({
       emailVerificationToken: hashedToken,
-      emailVerificationExpire: { $gt: Date.now() },
     });
 
     if (!user) {
-      // Token invalid or expired
-      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/verify-failed?reason=expired`);
+      return NextResponse.redirect(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/verify-failed?reason=invalid`
+      );
     }
-    
 
-    // ✅ Verify user
+    if (user.isVerified) {
+      return NextResponse.redirect(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/`
+      );
+    }
+
+    if (user.emailVerificationExpire < Date.now()) {
+      return NextResponse.redirect(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/verify-failed?reason=expired`
+      );
+    }
+
     user.isVerified = true;
     user.emailVerificationToken = undefined;
     user.emailVerificationExpire = undefined;
     await user.save();
 
-    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/verified-success`);
+    return NextResponse.redirect(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/verified-success`
+    );
+
   } catch (error) {
     console.error("Verification error:", error);
-    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/verify-failed?reason=server`);
+    return NextResponse.redirect(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/verify-failed?reason=server`
+    );
   }
 }
